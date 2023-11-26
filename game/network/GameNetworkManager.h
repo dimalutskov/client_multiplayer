@@ -30,6 +30,8 @@ public:
     void skillON(int skillId);
     void skillOFF(int skillId);
 
+    const std::string &getPlayerServerObjectId() const;
+
 private:
 
     virtual void onConnected() override ;

@@ -6,5 +6,7 @@ using namespace wnd;
 
 class GameplayMenuCallback {
 public:
-    virtual void onMove(Point<int> viewLocation) {}
+    virtual void onMove(int angle, int progress) {}
+    virtual void onSkillON(int skillId) {}
+    virtual void onSkillOFF(int skillId) {}
 };

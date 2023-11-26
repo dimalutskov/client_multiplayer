@@ -49,6 +49,17 @@ void GameNetworkManager::skillOFF(int skillId) {
 void GameNetworkManager::onConnected() {
     wnd::Logger::log("@@@ onConnected");
     mListener->onConnection(true);
+
+    // DEBUG
+    std::ostringstream ss;
+    ss << GameNetworkProtocol::CLIENT_MSG_SET_SERVER_DELAY << ";500";
+    mWebSocket->send(ss.str());
+
+    std::ostringstream ss2;
+    ss2 << GameNetworkProtocol::CLIENT_MSG_SET_SPEED << ";" << 200;
+    mWebSocket->send(ss2.str());
+
+
 }
 
 void GameNetworkManager::onDisconnected() {
@@ -69,6 +80,7 @@ void GameNetworkManager::onMessage(std::string message) {
         playerServerObjectId = splits[1];
         serverIteration = stol(splits[2]);
         ss << "onConnected " << playerServerObjectId << " " << serverIteration;
+        mListener->onPlayerConnection(playerServerObjectId);
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_PLAYER_CONNECT) {
         std::string playerId = splits[1];
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_PLAYER_DISCONNECT) {
@@ -80,4 +92,8 @@ void GameNetworkManager::onMessage(std::string message) {
     }
 
     wnd::Logger::log(ss.str());
+}
+
+const std::string &GameNetworkManager::getPlayerServerObjectId() const {
+    return playerServerObjectId;
 }

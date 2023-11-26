@@ -2,6 +2,7 @@
 #include "GameplayMenu.h"
 #include "PlayerController.h"
 #include "network/GameNetworkManager.h"
+#include "WorldEntitiesController.h"
 #include "wnd_engine/game_v2/GameWorld.h"
 #include "wnd_engine/game_v2/object/GameObject.h"
 #include "wnd_engine/game_v2/presenter/GameWorldPresenter.h"
@@ -15,6 +16,7 @@ GameScreen::GameScreen(App *app) : mApp(app),
                                    mWorldPresenter(createWorld(app)),
                                    mNetworkManager(new GameNetworkManager(app->getPlatform(), this)),
                                    mPlayerController(new PlayerController(mWorldPresenter)),
+                                   mEntitiesController(new WorldEntitiesController(mWorldPresenter)),
                                    mGameplayMenu(createGameplayMenu(app)) {
 }
 
@@ -59,7 +61,7 @@ GameWorldPresenter *GameScreen::createWorld(App *app) {
 
     GameWorld *gameWorld = new GameWorld(Point<float>(8000, 8000));
 
-    GameWorldPresenter *worldPresenter = new GameWorldPresenter(gameWorld, worldView, 1);
+    GameWorldPresenter *worldPresenter = new GameWorldPresenter(gameWorld, worldView, 0.8f);
     worldPresenter->setPausedOnAppPause(true);
     return worldPresenter;
 }
@@ -84,10 +86,24 @@ void GameScreen::onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeigh
 void GameScreen::onConnection(bool connected) {
 }
 
-void GameScreen::onGameStateUpdated(GameNetworkState state) {
-    mPlayerController->tempUpdate(state.getObjects().front());
+void GameScreen::onGameStateUpdated(const GameNetworkState &state) {
+    for (const GameNetworkObjectState obj : state.getObjects()) {
+        if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
+            mPlayerController->update(state.getServerIteration(), obj);
+        } else {
+            mEntitiesController->update(obj);
+        }
+    }
 }
 
-void GameScreen::onMove(Point<int> viewLocation) {
-    mPlayerController->onMove(viewLocation);
+void GameScreen::onMove(int angle, int progress) {
+    mPlayerController->onMove(angle, progress);
+}
+
+void GameScreen::onSkillON(int skillId) {
+    mPlayerController->startSkill(skillId);
+}
+
+void GameScreen::onSkillOFF(int skillId) {
+    mPlayerController->stopSkill(skillId);
 }

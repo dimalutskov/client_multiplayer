@@ -57,9 +57,15 @@ public:
     static const string CLIENT_MSG_SKILL_ON;
     static const string CLIENT_MSG_SKILL_OFF;
 
+    /// DEBUG MESSAGES
+    static const string CLIENT_MSG_SET_SERVER_DELAY;
+    static const string CLIENT_MSG_SET_SPEED;
+    static const string CLIENT_MSG_SET_SHOT_SPEED;
+    static const string CLIENT_MSG_SET_FIRE_RATE;
 
     ///////////////////// GAME OBJECT TYPES /////////////////////////
     static const int GAME_OBJECT_TYPE_PLAYER = 1;
+    static const int GAME_OBJECT_TYPE_SHOT = 2;
 };
 
 const string GameNetworkProtocol::SERVER_URL = "wss://dl-websockets-25f48806cc22.herokuapp.com/websocket";
@@ -72,3 +78,8 @@ const string GameNetworkProtocol::SERVER_MSG_PLAYER_DISCONNECT = "playerDisconne
 const string GameNetworkProtocol::CLIENT_MSG_MOVEMENT = "move";
 const string GameNetworkProtocol::CLIENT_MSG_SKILL_ON = "skillON";
 const string GameNetworkProtocol::CLIENT_MSG_SKILL_OFF = "skillOFF";
+
+const string GameNetworkProtocol::CLIENT_MSG_SET_SERVER_DELAY = "setServerDelay";
+const string GameNetworkProtocol::CLIENT_MSG_SET_SPEED = "setSpeed";
+const string GameNetworkProtocol::CLIENT_MSG_SET_SHOT_SPEED = "setShotSpeed";
+const string GameNetworkProtocol::CLIENT_MSG_SET_FIRE_RATE = "setFireRate";

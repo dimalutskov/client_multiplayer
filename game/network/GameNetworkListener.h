@@ -5,5 +5,6 @@
 class GameNetworkListener {
 public:
     virtual void onConnection(bool connected) {}
-    virtual void onGameStateUpdated(GameNetworkState state) {}
+    virtual void onPlayerConnection(std::string serverObjectId) {}
+    virtual void onGameStateUpdated(const GameNetworkState &state) {}
 };
