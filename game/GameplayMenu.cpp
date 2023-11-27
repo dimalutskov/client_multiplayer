@@ -33,8 +33,6 @@ void GameplayMenu::onHideGamePad(GamePadView *view) {
 void GameplayMenu::onUpdateGamePad(GamePadView *view, int angle, int progress) {
     GamePadListener::onUpdateGamePad(view, angle, progress);
     mCallback->onMove(angle, progress);
-    mNetworkManager->updatePlayerMovement(angle, progress);
-
 };
 
 void GameplayMenu::handleTouchEvent(TouchEvent event, TouchEvent downEvent) {
@@ -58,7 +56,6 @@ void GameplayMenu::handleTouchEvent(TouchEvent event, TouchEvent downEvent) {
                 if (!viewAlreadyPressed) {
                     mSkillTouchPointers[event.pointerId] = view;
                     int skillId = mSkillIds[view->getId()];
-                    mNetworkManager->skillON(skillId);
                     mCallback->onSkillON(skillId);
                 }
             }
@@ -70,7 +67,6 @@ void GameplayMenu::handleTouchEvent(TouchEvent event, TouchEvent downEvent) {
             View *view = mSkillTouchPointers[event.pointerId];
             if (view) {
                 int skillId = mSkillIds[view->getId()];
-                mNetworkManager->skillOFF(skillId);
                 mCallback->onSkillOFF(skillId);
                 mSkillTouchPointers.erase(event.pointerId);
             }

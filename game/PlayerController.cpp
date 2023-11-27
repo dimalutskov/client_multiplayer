@@ -7,7 +7,8 @@
 #include "wnd_engine/game_v2/collisions/GameObjectCollisionHandler.h"
 #include "GameConstants.h"
 
-PlayerController::PlayerController(GameWorldPresenter *worldPresenter) : mWorldPresenter(worldPresenter) {
+PlayerController::PlayerController(GameWorldPresenter *worldPresenter, GameNetworkManager *networkManager)
+    : mWorldPresenter(worldPresenter), mNetworkManager(networkManager) {
     lastServerUpdateIteration = 0;
     lastClientMoveIteration = 0;
 
@@ -25,7 +26,8 @@ PlayerController::PlayerController(GameWorldPresenter *worldPresenter) : mWorldP
     View *objectView = new View();
     objectView->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
         canvas->draw(canvas->newObject()
-                             ->setShape(RenderObject::SHAPE_TYPE_CIRCLE)
+//                             ->setShape(RenderObject::SHAPE_TYPE_CIRCLE)
+                             ->setAngle(canvas->getAngle())
                              ->setRenderData(RenderData(RgbData(255, 0, 255))));
     }));
 
@@ -34,8 +36,9 @@ PlayerController::PlayerController(GameWorldPresenter *worldPresenter) : mWorldP
     mWorldPresenter->addObjectPresenter(mObjectPresenter);
     mWorldPresenter->setCameraObject(mObjectPresenter->gameObject);
 
-    mMoveAction = new ObjectMovementAction(playerObject->getX(), playerObject->getY(), playerObject->getAngle(), [this](float x, float y, float angle) {
-        onActionMove(x, y, angle);
+    mMoveAction = new ObjectMovementAction(playerObject->getX(), playerObject->getY(), playerObject->getAngle(),
+                                           [this](std::uint64_t time, float x, float y, float angle) {
+        onActionMove(time, x, y, angle);
     });
     mWorldPresenter->getWorld()->addAction(mMoveAction);
 }
@@ -78,20 +81,24 @@ void PlayerController::update(long serverIteration, const GameNetworkObjectState
 
 void PlayerController::onMove(int angle, int progress) {
     mMoveAction->setAngle(angle);
-    mMoveAction->setSpeed(GameConstants::MAX_SPEED * (progress / 100.0f));
+    mMoveAction->setSpeed(GameConstants::MAX_SPEED * (progress / 100.0f)); // TODO
+
+    GameObject *obj = mObjectPresenter->gameObject;
 }
 
 void PlayerController::startSkill(int skillId) {
-
+    mNetworkManager->skillON(skillId);
 }
 
 void PlayerController::stopSkill(int skillId) {
-
+    mNetworkManager->skillOFF(skillId);
 }
 
-void PlayerController::onActionMove(float x, float y, float angle) {
+void PlayerController::onActionMove(std::uint64_t time, float x, float y, float angle) {
     mObjectPresenter->gameObject->setLocation(x, y);
     mObjectPresenter->gameObject->setAngle(angle);
     lastClientMoveIteration = lastServerUpdateIteration;
+
+    mNetworkManager->updatePlayerMovement(time, x, y, angle, mMoveAction->getSpeed());
 }
 

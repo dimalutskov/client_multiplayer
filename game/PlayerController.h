@@ -9,10 +9,12 @@ class GameWorldPresenter;
 class GameObjectPresenter;
 class GameNetworkManager;
 class GameNetworkObjectState;
+class GameNetworkManager;
 
 class PlayerController : GameObjectListener {
 private:
     GameWorldPresenter *const mWorldPresenter;
+    GameNetworkManager *const mNetworkManager;
 
     GameObjectPresenter *mObjectPresenter;
 
@@ -25,7 +27,7 @@ private:
     long lastClientMoveIteration;
 
 public:
-    PlayerController(GameWorldPresenter *worldPresenter);
+    PlayerController(GameWorldPresenter *worldPresenter, GameNetworkManager *networkManager);
 
     void update(long serverIteration, const GameNetworkObjectState &state);
 
@@ -40,6 +42,6 @@ public:
 
 private:
 
-    void onActionMove(float x, float y, float angle);
+    void onActionMove(std::uint64_t time, float x, float y, float angle);
 
 };

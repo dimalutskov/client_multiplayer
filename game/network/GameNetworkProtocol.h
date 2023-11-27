@@ -25,34 +25,34 @@ public:
     /**
     * Provides current game state with all required game objects, etc.
     * {MSG_TYPE};{SERVER_ITERATION};{OBJECT_STATE};{OBJECT_STATE};...{OBJECT_STATE};
-    * {OBJECT_STATE} = id;type;x;y;angle;...(rest type related props)
+    * {OBJECT_STATE} = id,type,health,energy,x,y,angle,speed...(rest type related props)
     */
     static const string SERVER_MSG_STATE;
 
     /**
     * Provides objectId for player which was connected to server
-    * {MSG_TYPE};{OBJECT_ID};
+    * {MSG_TYPE};{OBJECT_STATE};
     */
-    static const string SERVER_MSG_PLAYER_CONNECT;
+    static const string SERVER_MSG_OBJECT_ADDED;
 
     /**
     * Provides objectId for player which was disconnected to server
     * {MSG_TYPE};{OBJECT_ID};
     */
-    static const string SERVER_MSG_PLAYER_DISCONNECT;
+    static const string SERVER_MSG_OBJECT_DESTROYED;
 
 
     /////////////////// CLIENT_MESSAGES ///////////////////////////
 
     /**
     * Provides player movement attributes
-    * {MSG_TYPE};{SERVER_ITERATION};{angle(int)};{progress(int)};
+    * {MSG_TYPE};{SERVER_ITERATION};{x};{y};{angle};{speed}
     */
     static const string CLIENT_MSG_MOVEMENT;
 
     /**
      * Provides player skill attributes
-     * {MSG_TYPE};{SERVER_ITERATION};{skillID};{skillParams};
+     * {MSG_TYPE};{SERVER_ITERATION};{x};{y};{angle};{skillID};{skillParams};
      */
     static const string CLIENT_MSG_SKILL_ON;
     static const string CLIENT_MSG_SKILL_OFF;
@@ -72,8 +72,8 @@ const string GameNetworkProtocol::SERVER_URL = "wss://dl-websockets-25f48806cc22
 
 const string GameNetworkProtocol::SERVER_MSG_CONNECT_ID = "connected";
 const string GameNetworkProtocol::SERVER_MSG_STATE = "state";
-const string GameNetworkProtocol::SERVER_MSG_PLAYER_CONNECT = "playerConnected";
-const string GameNetworkProtocol::SERVER_MSG_PLAYER_DISCONNECT = "playerDisconnected";
+const string GameNetworkProtocol::SERVER_MSG_OBJECT_ADDED = "objectAdded";
+const string GameNetworkProtocol::SERVER_MSG_OBJECT_DESTROYED = "objectDestroyed";
 
 const string GameNetworkProtocol::CLIENT_MSG_MOVEMENT = "move";
 const string GameNetworkProtocol::CLIENT_MSG_SKILL_ON = "skillON";

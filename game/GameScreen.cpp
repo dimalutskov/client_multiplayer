@@ -2,7 +2,7 @@
 #include "GameplayMenu.h"
 #include "PlayerController.h"
 #include "network/GameNetworkManager.h"
-#include "WorldEntitiesController.h"
+//#include "WorldEntitiesController.h"
 #include "wnd_engine/game_v2/GameWorld.h"
 #include "wnd_engine/game_v2/object/GameObject.h"
 #include "wnd_engine/game_v2/presenter/GameWorldPresenter.h"
@@ -15,8 +15,9 @@ using namespace wnd;
 GameScreen::GameScreen(App *app) : mApp(app),
                                    mWorldPresenter(createWorld(app)),
                                    mNetworkManager(new GameNetworkManager(app->getPlatform(), this)),
-                                   mPlayerController(new PlayerController(mWorldPresenter)),
-                                   mEntitiesController(new WorldEntitiesController(mWorldPresenter)),
+                                   mPlayerController(new PlayerController(mWorldPresenter, mNetworkManager)),
+                                   mEntitiesController(0),
+//                                   mEntitiesController(new WorldEntitiesController(mWorldPresenter)),
                                    mGameplayMenu(createGameplayMenu(app)) {
 }
 
@@ -37,6 +38,7 @@ void GameScreen::attach() {
         view->setSize(100, 100);
         view->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
             canvas->draw(canvas->newObject()
+                                 ->setShape(RenderObject::SHAPE_TYPE_CIRCLE)
                                  ->setRenderData(RenderData(RgbData(0, 100, 255))));
         }));
         GameObjectPresenter *objectPresenter = new GameObjectPresenter(obj, view);
@@ -91,7 +93,7 @@ void GameScreen::onGameStateUpdated(const GameNetworkState &state) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
             mPlayerController->update(state.getServerIteration(), obj);
         } else {
-            mEntitiesController->update(obj);
+//            mEntitiesController->update(obj);
         }
     }
 }

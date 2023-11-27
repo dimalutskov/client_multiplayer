@@ -9,6 +9,8 @@ private:
     std::string stateString;
     std::string objectId;
     std::string objectType;
+    int health;
+    int energy;
     int x;
     int y;
     int angle;
@@ -19,9 +21,11 @@ public:
         wnd::CollectionUtils::split(stateSplits, stateString, ',');
         objectId = stateSplits[0];
         objectType = stateSplits[1];
-        x = std::stoi(stateSplits[2]);
-        y = std::stoi(stateSplits[3]);
-        angle = std::stoi(stateSplits[4]);
+        health = std::stoi(stateSplits[2]);
+        energy = std::stoi(stateSplits[3]);
+        x = std::stoi(stateSplits[4]);
+        y = std::stoi(stateSplits[5]);
+        angle = std::stoi(stateSplits[6]);
     }
 
     const std::string &getStateString() const {
@@ -34,6 +38,14 @@ public:
 
     const std::string &getObjectType() const {
         return objectType;
+    }
+
+    int getHealth() const {
+        return health;
+    }
+
+    int getEnergy() const {
+        return energy;
     }
 
     int getX() const {

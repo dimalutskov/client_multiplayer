@@ -12,26 +12,25 @@ GameNetworkManager::GameNetworkManager(wnd::Platform *platform, GameNetworkListe
     : mWebSocket(platform->addWebSocket(0, GameNetworkProtocol::SERVER_URL)), mListener(listener) {
     mWebSocket->setListener(this);
     serverIteration = 0;
-    moveAngle = 0;
-    moveProgress = 0;
+    lastMovementUpdate = 0;
 }
 
 void GameNetworkManager::connect() {
-    mWebSocket->connect();
+//    mWebSocket->connect();
 }
 
 void GameNetworkManager::disconnect() {
     mWebSocket->disconnect();
 }
 
-void GameNetworkManager::updatePlayerMovement(int angle, int progress) {
-    if (moveAngle != angle || moveProgress != progress) {
+void GameNetworkManager::updatePlayerMovement(std::uint64_t time, int x, int y, int angle, int speed) {
+    if (time - lastMovementUpdate > 50) { // TODO
         std::ostringstream ss;
-        ss << GameNetworkProtocol::CLIENT_MSG_MOVEMENT << ";" << serverIteration << ";" << angle<< ";" << progress;
+        ss << GameNetworkProtocol::CLIENT_MSG_MOVEMENT << ";" << serverIteration << ";" << x << ";"
+           << y << ";" << angle << ";" << speed;
         mWebSocket->send(ss.str());
-        moveAngle = angle;
-        moveProgress = progress;
     }
+    lastMovementUpdate = time;
 }
 
 void GameNetworkManager::skillON(int skillId) {
@@ -51,15 +50,13 @@ void GameNetworkManager::onConnected() {
     mListener->onConnection(true);
 
     // DEBUG
-    std::ostringstream ss;
-    ss << GameNetworkProtocol::CLIENT_MSG_SET_SERVER_DELAY << ";500";
-    mWebSocket->send(ss.str());
-
-    std::ostringstream ss2;
-    ss2 << GameNetworkProtocol::CLIENT_MSG_SET_SPEED << ";" << 200;
-    mWebSocket->send(ss2.str());
-
-
+//    std::ostringstream ss;
+//    ss << GameNetworkProtocol::CLIENT_MSG_SET_SERVER_DELAY << ";500";
+//    mWebSocket->send(ss.str());
+//
+//    std::ostringstream ss2;
+//    ss2 << GameNetworkProtocol::CLIENT_MSG_SET_SPEED << ";" << 200;
+//    mWebSocket->send(ss2.str());
 }
 
 void GameNetworkManager::onDisconnected() {
@@ -81,9 +78,9 @@ void GameNetworkManager::onMessage(std::string message) {
         serverIteration = stol(splits[2]);
         ss << "onConnected " << playerServerObjectId << " " << serverIteration;
         mListener->onPlayerConnection(playerServerObjectId);
-    } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_PLAYER_CONNECT) {
+    } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
         std::string playerId = splits[1];
-    } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_PLAYER_DISCONNECT) {
+    } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
         std::string playerId = splits[1];
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_STATE) {
         GameNetworkState state(splits);

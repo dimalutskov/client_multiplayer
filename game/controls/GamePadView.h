@@ -32,7 +32,6 @@ public:
             int cx = getCX(), cy = getCY();
             float distance = MathUtils::calculateDistance(cx, cy, touchEvent.x, touchEvent.y);
             angle = static_cast<int>(MathUtils::calculateAngleToTarget(cx, cy, touchEvent.x, touchEvent.y));
-            angle = MathUtils::customRound(angle, 30);
             progress = MathUtils::minFloat(1.0f, distance / (getWidth() / 2)) * 100;
             progress = MathUtils::customRound(progress, 10);
         }

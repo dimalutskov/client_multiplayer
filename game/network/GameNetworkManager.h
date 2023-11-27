@@ -14,9 +14,7 @@ private:
     std::string playerServerObjectId;
     long serverIteration;
 
-    // Movement
-    int moveAngle;
-    int moveProgress;
+    std::uint64_t lastMovementUpdate;
 
 public:
     GameNetworkManager(Platform *platform, GameNetworkListener *listener);
@@ -25,7 +23,7 @@ public:
 
     void disconnect();
 
-    void updatePlayerMovement(int angle, int progress);
+    void updatePlayerMovement(std::uint64_t time, int x, int y, int angle, int speed);
 
     void skillON(int skillId);
     void skillOFF(int skillId);
