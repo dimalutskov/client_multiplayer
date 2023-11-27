@@ -41,6 +41,7 @@ PlayerController::PlayerController(GameWorldPresenter *worldPresenter, GameNetwo
         onActionMove(time, x, y, angle);
     });
     mWorldPresenter->getWorld()->addAction(mMoveAction);
+    mWorldPresenter->getWorld()->addAction(this);
 }
 
 //void PlayerController::onMove(Point<int> viewLocation) {
@@ -82,12 +83,44 @@ void PlayerController::update(long serverIteration, const GameNetworkObjectState
 void PlayerController::onMove(int angle, int progress) {
     mMoveAction->setAngle(angle);
     mMoveAction->setSpeed(GameConstants::MAX_SPEED * (progress / 100.0f)); // TODO
-
-    GameObject *obj = mObjectPresenter->gameObject;
 }
 
 void PlayerController::startSkill(int skillId) {
     mNetworkManager->skillON(skillId);
+
+    // TODO SHOT Temp
+    GameObject *playerObj = mObjectPresenter->gameObject;
+
+    // Game object
+    GameObject *obj = new GameObject(GameConstants::GAME_OBJECT_PLAYER);
+    obj->setCenterLocation(playerObj->getCX(), playerObj->getCY());
+    obj->setAngle(playerObj->getAngle());
+    obj->setSize(20, 20);
+
+//    // Collisions
+//    GameObjectCollisionHandler *playerCollisions = new GameObjectCollisionHandler(playerObject);
+//    playerCollisions->addCollideType(GameConstants::GAME_OBJECT_OBSTACLE);
+//    mWorldPresenter->getWorld()->registerCollisionHandler(playerCollisions);
+
+    // View
+    View *view = new View();
+    view->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
+        canvas->draw(canvas->newObject()
+                             ->setShape(RenderObject::SHAPE_TYPE_CIRCLE)
+                             ->setAngle(canvas->getAngle())
+                             ->setRenderData(RenderData(RgbData(0, 0, 140))));
+    }));
+
+
+    ObjectMovementAction *moveAction = new ObjectMovementAction(obj->getX(), obj->getY(), obj->getAngle(),
+                                           [obj](std::uint64_t time, float x, float y, float angle) {
+                                               obj->setLocation(x, y);
+                                               obj->setAngle(time);
+                                           });
+    moveAction->setSpeed(400);
+
+    mWorldPresenter->addObjectPresenter(new GameObjectPresenter(obj, view));
+    mWorldPresenter->getWorld()->addAction(moveAction);
 }
 
 void PlayerController::stopSkill(int skillId) {
@@ -100,5 +133,10 @@ void PlayerController::onActionMove(std::uint64_t time, float x, float y, float 
     lastClientMoveIteration = lastServerUpdateIteration;
 
     mNetworkManager->updatePlayerMovement(time, x, y, angle, mMoveAction->getSpeed());
+}
+
+void PlayerController::step(std::uint64_t time) {
+    AppAction::step(time);
+
 }
 

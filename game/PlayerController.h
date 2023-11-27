@@ -1,5 +1,6 @@
 #pragma once
 
+#include <wnd_engine/action/AppAction.h>
 #include "wnd_engine/game_v2/object/GameObjectListener.h"
 #include "wnd_engine/game/action/ObjectMovementAction.h"
 
@@ -11,7 +12,7 @@ class GameNetworkManager;
 class GameNetworkObjectState;
 class GameNetworkManager;
 
-class PlayerController : GameObjectListener {
+class PlayerController : public AppAction, public GameObjectListener {
 private:
     GameWorldPresenter *const mWorldPresenter;
     GameNetworkManager *const mNetworkManager;
@@ -39,6 +40,8 @@ public:
 //    void onGameObjectDestroyed(GameObject *obj) override ;
     void onGameObjectCollision(GameObject *objA, GameObject *objB) override ;
     void onGameObjectCollisionEnd(GameObject *objA, GameObject *objB) override ;
+
+    virtual void step(std::uint64_t time) override;
 
 private:
 
