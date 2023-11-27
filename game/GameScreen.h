@@ -34,6 +34,8 @@ public:
     virtual void onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeight, int newHeight) override;
 
     virtual void onConnection(bool connected) override;
+    virtual void onGameObjectAdded(GameNetworkObjectState &state) override;
+    virtual void onGameObjectRemoved(GameNetworkObjectState &state) override;
     virtual void onGameStateUpdated(const GameNetworkState &state) override;
 
     virtual void onMove(int angle, int progress) override;

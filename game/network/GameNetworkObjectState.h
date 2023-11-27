@@ -26,6 +26,7 @@ public:
         x = std::stoi(stateSplits[4]);
         y = std::stoi(stateSplits[5]);
         angle = std::stoi(stateSplits[6]);
+//        int speed = std::stoi(stateSplits[7]);
     }
 
     const std::string &getStateString() const {

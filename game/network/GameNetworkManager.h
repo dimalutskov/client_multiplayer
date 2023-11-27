@@ -25,7 +25,7 @@ public:
 
     void updatePlayerMovement(std::uint64_t time, int x, int y, int angle, int speed);
 
-    void skillON(int skillId);
+    void skillON(int skillId, int x, int y, int angle);
     void skillOFF(int skillId);
 
     const std::string &getPlayerServerObjectId() const;

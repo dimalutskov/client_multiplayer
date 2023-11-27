@@ -2,7 +2,7 @@
 #include "GameplayMenu.h"
 #include "PlayerController.h"
 #include "network/GameNetworkManager.h"
-//#include "WorldEntitiesController.h"
+#include "WorldEntitiesController.h"
 #include "wnd_engine/game_v2/GameWorld.h"
 #include "wnd_engine/game_v2/object/GameObject.h"
 #include "wnd_engine/game_v2/presenter/GameWorldPresenter.h"
@@ -16,8 +16,7 @@ GameScreen::GameScreen(App *app) : mApp(app),
                                    mWorldPresenter(createWorld(app)),
                                    mNetworkManager(new GameNetworkManager(app->getPlatform(), this)),
                                    mPlayerController(new PlayerController(mWorldPresenter, mNetworkManager)),
-                                   mEntitiesController(0),
-//                                   mEntitiesController(new WorldEntitiesController(mWorldPresenter)),
+                                   mEntitiesController(new WorldEntitiesController(mWorldPresenter)),
                                    mGameplayMenu(createGameplayMenu(app)) {
 }
 
@@ -88,12 +87,24 @@ void GameScreen::onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeigh
 void GameScreen::onConnection(bool connected) {
 }
 
+void GameScreen::onGameObjectAdded(GameNetworkObjectState &state) {
+    GameNetworkListener::onGameObjectAdded(state);
+    if (state.getObjectId() != mNetworkManager->getPlayerServerObjectId()) {
+        mEntitiesController->addObject(state);
+    }
+}
+
+void GameScreen::onGameObjectRemoved(GameNetworkObjectState &state) {
+    GameNetworkListener::onGameObjectRemoved(state);
+    mEntitiesController->removeObject(state);
+}
+
 void GameScreen::onGameStateUpdated(const GameNetworkState &state) {
     for (const GameNetworkObjectState obj : state.getObjects()) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
             mPlayerController->update(state.getServerIteration(), obj);
         } else {
-//            mEntitiesController->update(obj);
+            mEntitiesController->update(obj);
         }
     }
 }
