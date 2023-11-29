@@ -35,7 +35,5 @@ void WorldEntitiesController::update(const GameNetworkObjectState &state) {
     } else {
         objectPresenter = entityRef->second;
     }
-    float x = state.getX();
-    float y = state.getY();
-    objectPresenter->gameObject->setLocation(x, y);
+    objectPresenter->update(state);
 }

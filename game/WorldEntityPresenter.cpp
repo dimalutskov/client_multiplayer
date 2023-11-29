@@ -39,3 +39,11 @@ void WorldEntityPresenter::onActionMove(std::uint64_t time, float x, float y, fl
     gameObject->setAngle(angle);
 }
 
+void WorldEntityPresenter::update(const GameNetworkObjectState &state) {
+    int x = state.getX();
+    int y = state.getY();
+    gameObject->setLocation(x, y);
+    gameObject->setAngle(state.getAngle());
+    mMoveAction->update(x, y);
+}
+

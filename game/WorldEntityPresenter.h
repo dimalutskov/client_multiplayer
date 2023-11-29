@@ -13,6 +13,8 @@ private:
 public:
     WorldEntityPresenter(const GameNetworkObjectState &state);
 
+    void update(const GameNetworkObjectState &state);
+
 private:
     GameObject *createObject(const GameNetworkObjectState &state);
     View *createView(const GameNetworkObjectState &state);
