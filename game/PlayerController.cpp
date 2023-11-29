@@ -8,7 +8,7 @@
 #include "GameConstants.h"
 
 PlayerController::PlayerController(GameWorldPresenter *worldPresenter, GameNetworkManager *networkManager)
-    : mWorldPresenter(worldPresenter), mNetworkManager(networkManager) {
+    : AppActionGroup(APP_ACTION_GROUP_TOGETHER), mWorldPresenter(worldPresenter), mNetworkManager(networkManager) {
     lastServerUpdateIteration = 0;
     lastClientMoveIteration = 0;
 
@@ -40,8 +40,8 @@ PlayerController::PlayerController(GameWorldPresenter *worldPresenter, GameNetwo
                                            [this](std::uint64_t time, float x, float y, float angle) {
         onActionMove(time, x, y, angle);
     });
-    mWorldPresenter->getWorld()->addAction(mMoveAction);
-    mWorldPresenter->getWorld()->addAction(this);
+    mObjectPresenter->addAction(mMoveAction);
+    mObjectPresenter->addAction(this);
 }
 
 //void PlayerController::onMove(Point<int> viewLocation) {

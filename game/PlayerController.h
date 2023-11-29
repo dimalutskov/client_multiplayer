@@ -1,6 +1,6 @@
 #pragma once
 
-#include <wnd_engine/action/AppAction.h>
+#include <wnd_engine/action/AppActionGroup.h>
 #include "wnd_engine/game_v2/object/GameObjectListener.h"
 #include "wnd_engine/game/action/ObjectMovementAction.h"
 
@@ -12,7 +12,7 @@ class GameNetworkManager;
 class GameNetworkObjectState;
 class GameNetworkManager;
 
-class PlayerController : public AppAction, public GameObjectListener {
+class PlayerController : public AppActionGroup, public GameObjectListener {
 private:
     GameWorldPresenter *const mWorldPresenter;
     GameNetworkManager *const mNetworkManager;
