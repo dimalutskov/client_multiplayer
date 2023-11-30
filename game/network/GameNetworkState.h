@@ -8,24 +8,24 @@ using namespace std;
 
 class GameNetworkState {
 private:
-    long serverIteration;
+    std::uint64_t serverTime;
     vector<GameNetworkObjectState> objects;
 
 public:
     GameNetworkState() {
-        this->serverIteration = 0;
+        this->serverTime = 0;
     }
 
     GameNetworkState(vector<string> &messageSplits) {
-        this->serverIteration = stol(messageSplits[1]);
+        this->serverTime = stol(messageSplits[1]);
 
         for (int i = 2; i < messageSplits.size(); i++) {
-            objects.push_back(GameNetworkObjectState(messageSplits[i]));
+            objects.push_back(GameNetworkObjectState(serverTime, messageSplits[i]));
         }
     }
 
     long getServerIteration() const {
-        return serverIteration;
+        return serverTime;
     }
 
     const vector <GameNetworkObjectState> &getObjects() const {

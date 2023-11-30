@@ -6,12 +6,13 @@
 #include "network/GameNetworkObjectState.h"
 
 WorldEntityPresenter::WorldEntityPresenter(const GameNetworkObjectState &state) : GameObjectPresenter(createObject(state), createView(state)) {
-    mMoveAction = new ObjectMovementAction(state.getX(), state.getY(), state.getAngle(),
-                                           [this](std::uint64_t time, float x, float y, float angle) {
-                                               onActionMove(time, x, y, angle);
-                                           });
-    mMoveAction->setSpeed(300); // TODO
-    addAction(mMoveAction);
+}
+
+void WorldEntityPresenter::update(const GameNetworkObjectState &state) {
+    int x = state.getX();
+    int y = state.getY();
+    gameObject->setLocation(x, y);
+    gameObject->setAngle(state.getAngle());
 }
 
 GameObject *WorldEntityPresenter::createObject(const GameNetworkObjectState &state) {
@@ -33,17 +34,3 @@ View *WorldEntityPresenter::createView(const GameNetworkObjectState &state) {
     }));
     return objectView;
 }
-
-void WorldEntityPresenter::onActionMove(std::uint64_t time, float x, float y, float angle) {
-    gameObject->setLocation(x, y);
-    gameObject->setAngle(angle);
-}
-
-void WorldEntityPresenter::update(const GameNetworkObjectState &state) {
-    int x = state.getX();
-    int y = state.getY();
-    gameObject->setLocation(x, y);
-    gameObject->setAngle(state.getAngle());
-    mMoveAction->update(x, y);
-}
-

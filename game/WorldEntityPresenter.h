@@ -8,7 +8,6 @@ class GameObject;
 
 class WorldEntityPresenter : public GameObjectPresenter {
 private:
-    ObjectMovementAction *mMoveAction;
 
 public:
     WorldEntityPresenter(const GameNetworkObjectState &state);
@@ -18,6 +17,4 @@ public:
 private:
     GameObject *createObject(const GameNetworkObjectState &state);
     View *createView(const GameNetworkObjectState &state);
-
-    void onActionMove(std::uint64_t time, float x, float y, float angle);
 };

@@ -6,27 +6,23 @@ using namespace std;
 
 class GameNetworkObjectState {
 private:
-    std::string stateString;
+    std::uint64_t time;
+    std::string stateString; // original state
     std::string objectId;
     std::string objectType;
-    int health;
-    int energy;
     int x;
     int y;
     int angle;
 
 public:
-    GameNetworkObjectState(std::string &stateString) : stateString(stateString) {
+    GameNetworkObjectState(std::uint64_t time, std::string &stateString) : time(time), stateString(stateString) {
         vector<string> stateSplits;
         wnd::CollectionUtils::split(stateSplits, stateString, ',');
         objectId = stateSplits[0];
         objectType = stateSplits[1];
-        health = std::stoi(stateSplits[2]);
-        energy = std::stoi(stateSplits[3]);
-        x = std::stoi(stateSplits[4]);
-        y = std::stoi(stateSplits[5]);
-        angle = std::stoi(stateSplits[6]);
-//        int speed = std::stoi(stateSplits[7]);
+        x = std::stoi(stateSplits[2]);
+        y = std::stoi(stateSplits[3]);
+        angle = std::stoi(stateSplits[4]);
     }
 
     const std::string &getStateString() const {
@@ -39,14 +35,6 @@ public:
 
     const std::string &getObjectType() const {
         return objectType;
-    }
-
-    int getHealth() const {
-        return health;
-    }
-
-    int getEnergy() const {
-        return energy;
     }
 
     int getX() const {

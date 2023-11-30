@@ -12,7 +12,7 @@ private:
     GameNetworkListener *const mListener;
 
     std::string playerServerObjectId;
-    long serverIteration;
+    uint64_t lastServerTime;
 
     std::uint64_t lastMovementUpdate;
 
