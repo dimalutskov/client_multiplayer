@@ -17,7 +17,7 @@ private:
 public:
     WorldEntitiesController(GameWorldPresenter *worldPresenter);
 
-    void addObject(const GameNetworkObjectState &state);
+    WorldEntityPresenter *addObject(const GameNetworkObjectState &state);
     void removeObject(const GameNetworkObjectState &state);
     void update(const GameNetworkObjectState &state);
 

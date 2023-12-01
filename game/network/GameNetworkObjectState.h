@@ -6,7 +6,7 @@ using namespace std;
 
 class GameNetworkObjectState {
 private:
-    std::uint64_t time;
+    std::uint64_t clientTime;
     std::string stateString; // original state
     std::string objectId;
     std::string objectType;
@@ -15,7 +15,7 @@ private:
     int angle;
 
 public:
-    GameNetworkObjectState(std::uint64_t time, std::string &stateString) : time(time), stateString(stateString) {
+    GameNetworkObjectState(std::uint64_t clientTime, std::string &stateString) : clientTime(clientTime), stateString(stateString) {
         vector<string> stateSplits;
         wnd::CollectionUtils::split(stateSplits, stateString, ',');
         objectId = stateSplits[0];
@@ -23,6 +23,10 @@ public:
         x = std::stoi(stateSplits[2]);
         y = std::stoi(stateSplits[3]);
         angle = std::stoi(stateSplits[4]);
+    }
+
+    const std::uint64_t &getClientTime() const {
+        return clientTime;
     }
 
     const std::string &getStateString() const {

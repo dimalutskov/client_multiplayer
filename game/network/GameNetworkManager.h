@@ -8,11 +8,14 @@ using namespace wnd;
 
 class GameNetworkManager : public WebSocketListener {
 private:
+    Platform *const mPlatform;
     PlatformWebSocket *const mWebSocket;
     GameNetworkListener *const mListener;
 
-    std::string playerServerObjectId;
+    string playerServerObjectId;
+    uint64_t firstStateTime; // client clientTime when first state message received
     uint64_t lastServerTime;
+    long serverUpdateInterval;
 
     std::uint64_t lastMovementUpdate;
 

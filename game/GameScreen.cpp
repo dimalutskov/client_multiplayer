@@ -102,7 +102,7 @@ void GameScreen::onGameObjectRemoved(GameNetworkObjectState &state) {
 void GameScreen::onGameStateUpdated(const GameNetworkState &state) {
     for (const GameNetworkObjectState obj : state.getObjects()) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
-            mPlayerController->update(state.getServerIteration(), obj);
+            mPlayerController->update(state.getServerTime(), obj);
         } else {
             mEntitiesController->update(obj);
         }

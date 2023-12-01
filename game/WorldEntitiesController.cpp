@@ -12,10 +12,11 @@ WorldEntitiesController::WorldEntitiesController(GameWorldPresenter *worldPresen
 
 }
 
-void WorldEntitiesController::addObject(const GameNetworkObjectState &state) {
+WorldEntityPresenter *WorldEntitiesController::addObject(const GameNetworkObjectState &state) {
     WorldEntityPresenter *objectPresenter = new WorldEntityPresenter(state);
     mEntities[state.getObjectId()] = objectPresenter;
     mWorldPresenter->addObjectPresenter(objectPresenter);
+    return objectPresenter;
 }
 
 void WorldEntitiesController::removeObject(const GameNetworkObjectState &state) {
@@ -30,8 +31,7 @@ void WorldEntitiesController::update(const GameNetworkObjectState &state) {
     WorldEntityPresenter *objectPresenter = 0;
     auto entityRef = mEntities.find(state.getObjectId());
     if (entityRef == mEntities.end()) {
-        objectPresenter = new WorldEntityPresenter(state);
-        mEntities[state.getObjectId()] = objectPresenter;
+        objectPresenter = addObject(state);
     } else {
         objectPresenter = entityRef->second;
     }

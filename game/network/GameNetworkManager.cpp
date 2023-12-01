@@ -9,8 +9,9 @@
 using namespace std;
 
 GameNetworkManager::GameNetworkManager(wnd::Platform *platform, GameNetworkListener *listener)
-    : mWebSocket(platform->addWebSocket(0, GameNetworkProtocol::SERVER_URL)), mListener(listener) {
+    : mPlatform(platform), mWebSocket(platform->addWebSocket(0, GameNetworkProtocol::SERVER_URL)), mListener(listener) {
     mWebSocket->setListener(this);
+    firstStateTime = 0;
     lastServerTime = 0;
     lastMovementUpdate = 0;
 }
@@ -69,6 +70,8 @@ void GameNetworkManager::onMessage(std::string message) {
     std::ostringstream ss;
     ss << "@@@ ";
 
+    std::uint64_t clientTime = mPlatform->milliseconds();
+
     vector<string> splits;
     CollectionUtils::split(splits, message, ';');
     if (splits.empty()) {
@@ -78,18 +81,18 @@ void GameNetworkManager::onMessage(std::string message) {
         playerServerObjectId = splits[1];
 
         vector<string> serverInfoSplits;
-        CollectionUtils::split(serverInfoSplits, splits[2], ';');
+        CollectionUtils::split(serverInfoSplits, splits[2], ',');
 
         lastServerTime = stol(serverInfoSplits[0]);
         long serverUpdateInterval = stol(serverInfoSplits[1]);
 
         ss << "onConnected " << playerServerObjectId << " " << lastServerTime;
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
-        GameNetworkObjectState obj(stol(splits[1]), splits[2]);
+        GameNetworkObjectState obj(clientTime, splits[2]);
         mListener->onGameObjectAdded(obj);
         ss << "onObjectAdded " << message;
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
-        GameNetworkObjectState obj(stol(splits[1]), splits[2]);
+        GameNetworkObjectState obj(clientTime, splits[2]);
         mListener->onGameObjectRemoved(obj);
         ss << "onObjectDestroyed " << message;
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS) {
@@ -101,8 +104,12 @@ void GameNetworkManager::onMessage(std::string message) {
 
         ss << "onSkillObjects " << message;
     } else if (splits[0] == GameNetworkProtocol::SERVER_MSG_STATE) {
-        GameNetworkState state(splits);
-        lastServerTime = state.getServerIteration();
+        if (firstStateTime == 0) {
+            firstStateTime = clientTime;
+        }
+
+        GameNetworkState state(clientTime, splits);
+        lastServerTime = state.getServerTime();
         mListener->onGameStateUpdated(state);
         ss << "onMessage " << message;
     }
