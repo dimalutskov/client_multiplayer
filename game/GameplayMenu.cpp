@@ -1,6 +1,7 @@
 #include "GameplayMenu.h"
 #include "wnd_engine/Logger.h"
 #include "network/GameNetworkManager.h"
+#include "GameConstants.h"
 
 GameplayMenu::GameplayMenu(ViewGroup *rootView, GameNetworkManager *networkManager, GameplayMenuCallback *callback)
     : view(rootView), mNetworkManager(networkManager), mCallback(callback) {
@@ -32,7 +33,7 @@ void GameplayMenu::onHideGamePad(GamePadView *view) {
 
 void GameplayMenu::onUpdateGamePad(GamePadView *view, int angle, int progress) {
     GamePadListener::onUpdateGamePad(view, angle, progress);
-    mCallback->onMove(angle, progress);
+    mCallback->onGamePadMove(angle, progress);
 };
 
 void GameplayMenu::handleTouchEvent(TouchEvent event, TouchEvent downEvent) {
@@ -88,7 +89,7 @@ void GameplayMenu::initSkills() {
     }));
     mSkillViews.push_back(skillView1);
     view->addChild(skillView1);
-    mSkillIds[skillView1->getId()] = 101;
+    mSkillIds[skillView1->getId()] = GameConstants::SKILL_ID_SHOT;
 
     // 2
     View *skillView2 = new View();
@@ -102,7 +103,7 @@ void GameplayMenu::initSkills() {
     }));
     mSkillViews.push_back(skillView2);
     view->addChild(skillView2);
-    mSkillIds[skillView2->getId()] = 102;
+    mSkillIds[skillView2->getId()] = GameConstants::SKILL_ID_SPEED;
 
     view->subscribeSizeChanges([this, skillView1, skillView2](Point<int> oldSize, Point<int> newSize) {
         // 1

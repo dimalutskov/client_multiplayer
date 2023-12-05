@@ -3,7 +3,7 @@
 #include <wnd_engine/App.h>
 #include <wnd_engine/AppLifecycleListener.h>
 #include "GameplayMenuCallback.h"
-#include "network/GameNetworkListener.h"
+#include "network/NetworkListener.h"
 
 using namespace wnd;
 
@@ -13,7 +13,7 @@ class GameplayMenu;
 class GameNetworkManager;
 class WorldEntitiesController;
 
-class GameScreen : public AppLifecycleListener, GameplayMenuCallback, GameNetworkListener {
+class GameScreen : public AppLifecycleListener, GameplayMenuCallback, NetworkListener {
 private:
     App *const mApp;
     GameWorldPresenter *const mWorldPresenter;
@@ -34,11 +34,11 @@ public:
     virtual void onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeight, int newHeight) override;
 
     virtual void onConnection(bool connected) override;
-    virtual void onGameObjectAdded(GameNetworkObjectState &state) override;
-    virtual void onGameObjectRemoved(GameNetworkObjectState &state) override;
-    virtual void onGameStateUpdated(const GameNetworkState &state) override;
+    virtual void onGameObjectAdded(ObjectState &state) override;
+    virtual void onGameObjectRemoved(ObjectState &state) override;
+    virtual void onGameStateUpdated(const WorldState &state) override;
 
-    virtual void onMove(int angle, int progress) override;
+    virtual void onGamePadMove(int angle, int progress) override;
     virtual void onSkillON(int skillId) override;
     virtual void onSkillOFF(int skillId) override;
 

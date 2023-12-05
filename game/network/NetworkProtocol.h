@@ -5,20 +5,24 @@
 using namespace std;
 
 /**
-* First int before first ; in string message(both client and server) defines message type
-* "{MSG_TYPE};{MSG_CONTENT};"
-*/
-class GameNetworkProtocol {
+ * First int before first ; in string message(both client and server) defines message type
+ * "{MSG_TYPE};{MSG_CONTENT};"
+ *
+ * {SERVER_TIME} - server time
+ * {SERVER_ESTIMATED_TIME} - server time which is calculated on client side based on last server state
+ */
+class NetworkProtocol {
 public:
     static const string SERVER_URL;
 
     /////////////////// SERVER_MESSAGES //////////////////////
 
     /**
-    * Provides server information and objectId for this connected client to retrieve current player state from server state message
-    * {MSG_TYPE};{OBJECT_ID};{SERVER_INFO};
-    * SERVER_INFO: "{SERVER_TIME},{UPDATE_INTERVAL}"
-    */
+     * Provides server information and objectId for this connected client to retrieve current player state from server state message
+     * {MSG_TYPE};{SERVER_INFO};{OBJECT_ID};{PLAYER_INFO}
+     * SERVER_INFO: "{SERVER_TIME},{UPDATE_INTERVAL}"
+     * PLAYER_INFO: "{HEALTH},{ENERGY},{SPEED}"
+     */
     static const string SERVER_MSG_RESPONSE_CONNECTED;
 
     /**
@@ -64,22 +68,18 @@ public:
 
     /// DEBUG MESSAGES
     static const string CLIENT_MSG_SET_SERVER_DELAY;
-
-    ///////////////////// GAME OBJECT TYPES /////////////////////////
-    static const int GAME_OBJECT_TYPE_PLAYER = 1;
-    static const int GAME_OBJECT_TYPE_SHOT = 2;
 };
 
-const string GameNetworkProtocol::SERVER_URL = "wss://dl-websockets-25f48806cc22.herokuapp.com/websocket";
+const string NetworkProtocol::SERVER_URL = "wss://dl-websockets-25f48806cc22.herokuapp.com/websocket";
 
-const string GameNetworkProtocol::SERVER_MSG_RESPONSE_CONNECTED = "connected";
-const string GameNetworkProtocol::SERVER_MSG_STATE = "state";
-const string GameNetworkProtocol::SERVER_MSG_OBJECT_ADDED = "objectAdded";
-const string GameNetworkProtocol::SERVER_MSG_OBJECT_DESTROYED = "objectDestroyed";
-const string GameNetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS = "skillObjects";
+const string NetworkProtocol::SERVER_MSG_RESPONSE_CONNECTED = "connected";
+const string NetworkProtocol::SERVER_MSG_STATE = "state";
+const string NetworkProtocol::SERVER_MSG_OBJECT_ADDED = "objectAdded";
+const string NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED = "objectDestroyed";
+const string NetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS = "skillObjects";
 
-const string GameNetworkProtocol::CLIENT_MSG_MOVEMENT = "move";
-const string GameNetworkProtocol::CLIENT_MSG_SKILL_ON = "skillON";
-const string GameNetworkProtocol::CLIENT_MSG_SKILL_OFF = "skillOFF";
+const string NetworkProtocol::CLIENT_MSG_MOVEMENT = "move";
+const string NetworkProtocol::CLIENT_MSG_SKILL_ON = "skillON";
+const string NetworkProtocol::CLIENT_MSG_SKILL_OFF = "skillOFF";
 
-const string GameNetworkProtocol::CLIENT_MSG_SET_SERVER_DELAY = "setServerDelay";
+const string NetworkProtocol::CLIENT_MSG_SET_SERVER_DELAY = "setServerDelay";

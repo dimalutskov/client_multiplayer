@@ -87,30 +87,32 @@ void GameScreen::onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeigh
 void GameScreen::onConnection(bool connected) {
 }
 
-void GameScreen::onGameObjectAdded(GameNetworkObjectState &state) {
-    GameNetworkListener::onGameObjectAdded(state);
+void GameScreen::onGameObjectAdded(ObjectState &state) {
+    NetworkListener::onGameObjectAdded(state);
     if (state.getObjectId() != mNetworkManager->getPlayerServerObjectId()) {
         mEntitiesController->addObject(state);
     }
 }
 
-void GameScreen::onGameObjectRemoved(GameNetworkObjectState &state) {
-    GameNetworkListener::onGameObjectRemoved(state);
+void GameScreen::onGameObjectRemoved(ObjectState &state) {
+    NetworkListener::onGameObjectRemoved(state);
     mEntitiesController->removeObject(state);
 }
 
-void GameScreen::onGameStateUpdated(const GameNetworkState &state) {
-    for (const GameNetworkObjectState obj : state.getObjects()) {
+void GameScreen::onGameStateUpdated(const WorldState &state) {
+    for (const ObjectState obj : state.getObjects()) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
             mPlayerController->update(state.getServerTime(), obj);
         } else {
-            mEntitiesController->update(obj);
+//            if (!mNetworkManager->isPlayerSkillObject(obj.getObjectId())) { // TODO keep for testing
+                mEntitiesController->update(obj);
+//            }
         }
     }
 }
 
-void GameScreen::onMove(int angle, int progress) {
-    mPlayerController->onMove(angle, progress);
+void GameScreen::onGamePadMove(int angle, int progress) {
+    mPlayerController->onGamePadMove(angle, progress);
 }
 
 void GameScreen::onSkillON(int skillId) {

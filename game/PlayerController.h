@@ -9,7 +9,7 @@ using namespace wnd;
 class GameWorldPresenter;
 class GameObjectPresenter;
 class GameNetworkManager;
-class GameNetworkObjectState;
+class ObjectState;
 class GameNetworkManager;
 
 class PlayerController : public AppActionGroup, public GameObjectListener {
@@ -30,9 +30,9 @@ private:
 public:
     PlayerController(GameWorldPresenter *worldPresenter, GameNetworkManager *networkManager);
 
-    void update(long serverIteration, const GameNetworkObjectState &state);
+    void update(long serverIteration, const ObjectState &state);
 
-    void onMove(int angle, int progress);
+    void onGamePadMove(int angle, int progress);
     void startSkill(int skillId);
     void stopSkill(int skillId);
 
@@ -45,6 +45,6 @@ public:
 
 private:
 
-    void onActionMove(std::uint64_t time, float x, float y, float angle);
+    void onActionMove(float x, float y, float angle);
 
 };

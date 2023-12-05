@@ -4,22 +4,24 @@
 
 using namespace std;
 
-class GameNetworkObjectState {
+class ObjectState {
 private:
     std::uint64_t clientTime;
+    std::uint64_t serverTime;
     std::string stateString; // original state
     std::string objectId;
-    std::string objectType;
+    int objectType;
     int x;
     int y;
     int angle;
 
 public:
-    GameNetworkObjectState(std::uint64_t clientTime, std::string &stateString) : clientTime(clientTime), stateString(stateString) {
+    ObjectState(std::uint64_t clientTime, std::uint64_t serverTime, std::string &stateString)
+    : clientTime(clientTime), serverTime(serverTime), stateString(stateString) {
         vector<string> stateSplits;
         wnd::CollectionUtils::split(stateSplits, stateString, ',');
         objectId = stateSplits[0];
-        objectType = stateSplits[1];
+        objectType = std::stoi(stateSplits[1]);
         x = std::stoi(stateSplits[2]);
         y = std::stoi(stateSplits[3]);
         angle = std::stoi(stateSplits[4]);
@@ -27,6 +29,10 @@ public:
 
     const std::uint64_t &getClientTime() const {
         return clientTime;
+    }
+
+    const std::uint64_t &getServerTime() const {
+        return serverTime;
     }
 
     const std::string &getStateString() const {
@@ -37,7 +43,7 @@ public:
         return objectId;
     }
 
-    const std::string &getObjectType() const {
+    const int &getObjectType() const {
         return objectType;
     }
 
