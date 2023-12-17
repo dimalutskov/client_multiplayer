@@ -3,21 +3,21 @@
 #include "wnd_engine/game_v2/presenter/GameObjectPresenter.h"
 #include "wnd_engine/game/action/ObjectMovementAction.h"
 
-class ObjectState;
+class EntityState;
 class GameObject;
 
 class WorldEntityPresenter : public GameObjectPresenter {
 private:
-    std::vector<ObjectState> lastStates;
+    std::vector<EntityState> lastStates;
 
 public:
-    WorldEntityPresenter(const ObjectState &state);
+    WorldEntityPresenter(const EntityState &state);
 
-    void update(const ObjectState &state);
+    void update(const EntityState &state);
 
     virtual void step(std::uint64_t time) override;
 
 private:
-    GameObject *createObject(const ObjectState &state);
-    View *createView(const ObjectState &state);
+    GameObject *createObject(const EntityState &state);
+    View *createView(const EntityState &state);
 };

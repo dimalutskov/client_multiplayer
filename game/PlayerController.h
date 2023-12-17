@@ -9,7 +9,7 @@ using namespace wnd;
 class GameWorldPresenter;
 class GameObjectPresenter;
 class GameNetworkManager;
-class ObjectState;
+class EntityState;
 class GameNetworkManager;
 
 class PlayerController : public AppActionGroup, public GameObjectListener {
@@ -21,16 +21,12 @@ private:
 
     ObjectMovementAction *mMoveAction;
 
-    /**
-     * Used to sync client move and server state updates to apply "server-side-prediction"
-     */
-    long lastServerUpdateIteration;
-    long lastClientMoveIteration;
+    bool speedSkill;
 
 public:
     PlayerController(GameWorldPresenter *worldPresenter, GameNetworkManager *networkManager);
 
-    void update(long serverIteration, const ObjectState &state);
+    void update(long serverIteration, const EntityState &state);
 
     void onGamePadMove(int angle, int progress);
     void startSkill(int skillId);

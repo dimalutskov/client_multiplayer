@@ -21,7 +21,6 @@ public:
      * Provides server information and objectId for this connected client to retrieve current player state from server state message
      * {MSG_TYPE};{SERVER_INFO};{OBJECT_ID};{PLAYER_INFO}
      * SERVER_INFO: "{SERVER_TIME},{UPDATE_INTERVAL}"
-     * PLAYER_INFO: "{HEALTH},{ENERGY},{SPEED}"
      */
     static const string SERVER_MSG_RESPONSE_CONNECTED;
 
@@ -60,10 +59,16 @@ public:
     static const string CLIENT_MSG_MOVEMENT;
 
     /**
-     * Provides player skill attributes
-     * {MSG_TYPE};{SERVER_TIME};{x};{y};{angle};{skillID};{skillParams};
-     */
+    * Provides player skill attributes
+    * {MSG_TYPE};{SERVER_ESTIMATED_TIME};{skillID};{skillParams};
+    * skillParams - {x};{y};{angle} - for single shots
+    */
     static const string CLIENT_MSG_SKILL_ON;
+
+    /**
+     * Provides player skill attributes
+     * {MSG_TYPE};{SERVER_ESTIMATED_TIME};{skillID};{skillDuration};
+     */
     static const string CLIENT_MSG_SKILL_OFF;
 
     /// DEBUG MESSAGES

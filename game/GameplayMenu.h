@@ -3,10 +3,12 @@
 #include "GameplayMenuCallback.h"
 #include "wnd_engine/layout/view/ViewGroup.h"
 #include "app/game/controls/GamePadController.h"
+#include "wnd_engine/layout/view/text/TextDrawer.h"
 
 using namespace wnd;
 
 class GameNetworkManager;
+class EntityState;
 
 class GameplayMenu : GamePadListener {
 private:
@@ -22,6 +24,9 @@ private:
     // key - pointerId, value - touched view
     std::unordered_map<int, View*> mSkillTouchPointers;
 
+    TextDrawer *mHealthTextDrawer;
+    TextDrawer *mEnergyTextDrawer;
+
 public:
 
     GameplayMenu(ViewGroup *rootView, GameNetworkManager *networkManager, GameplayMenuCallback *callback);
@@ -32,7 +37,10 @@ public:
     virtual void onHideGamePad(GamePadView *view);
     virtual void onUpdateGamePad(GamePadView *view, int angle, int progress);
 
+    void update(const EntityState &playerState);
+
 private:
     void initSkills();
+    void initPropertyDrawers();
     void handleTouchEvent(TouchEvent event, TouchEvent downEvent);
 };

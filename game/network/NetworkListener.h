@@ -5,7 +5,7 @@
 class NetworkListener {
 public:
     virtual void onConnection(bool connected) {}
-    virtual void onGameObjectAdded(ObjectState &state) {}
-    virtual void onGameObjectRemoved(ObjectState &state) {}
+    virtual void onGameObjectAdded(EntityState &state) {}
+    virtual void onGameObjectRemoved(EntityState &state) {}
     virtual void onGameStateUpdated(const WorldState &state) {}
 };

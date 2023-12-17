@@ -5,7 +5,7 @@
 
 class WorldEntityPresenter;
 class GameWorldPresenter;
-class ObjectState;
+class EntityState;
 
 class WorldEntitiesController {
 private:
@@ -17,8 +17,8 @@ private:
 public:
     WorldEntitiesController(GameWorldPresenter *worldPresenter);
 
-    WorldEntityPresenter *addObject(const ObjectState &state);
-    void removeObject(const ObjectState &state);
-    void update(const ObjectState &state);
+    WorldEntityPresenter *addObject(const EntityState &state);
+    void removeObject(const EntityState &state);
+    void update(const EntityState &state);
 
 };

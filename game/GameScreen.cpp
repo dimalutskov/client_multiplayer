@@ -9,6 +9,7 @@
 #include "wnd_engine/game_v2/presenter/GameObjectPresenter.h"
 #include "app/game/controls/GamePadController.h"
 #include "wnd_engine/Logger.h"
+#include "../resources/AppRes.h"
 
 using namespace wnd;
 
@@ -23,6 +24,13 @@ GameScreen::GameScreen(App *app) : mApp(app),
 void GameScreen::attach() {
     mApp->addLifecycleListener(this);
 
+    // Bg temp
+    Point<int> renderSize = mApp->getRenderSize();
+    RenderScreen *backgroundScreen = mApp->createRenderScreen(renderSize.getX(), renderSize.getY());
+    ViewGroup *backgroundView = initSpaceBackground(renderSize, 50);
+    backgroundView->setRenderScreen(backgroundScreen);
+//    mApp->attachView(backgroundView);
+
     mApp->attachView(mWorldPresenter->getView());
     mApp->attachView(mGameplayMenu->getView());
 
@@ -32,7 +40,7 @@ void GameScreen::attach() {
         GameObject *obj = new GameObject(3);
         float size = 80;
         obj->setSize(size, size);
-        obj->setLocation(size * i + size * 2, size * i + size * 2);
+        obj->setCenterLocation(size * i + size * 2, size * i + size * 2);
         View *view = new View();
         view->setSize(100, 100);
         view->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
@@ -87,22 +95,23 @@ void GameScreen::onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeigh
 void GameScreen::onConnection(bool connected) {
 }
 
-void GameScreen::onGameObjectAdded(ObjectState &state) {
+void GameScreen::onGameObjectAdded(EntityState &state) {
     NetworkListener::onGameObjectAdded(state);
     if (state.getObjectId() != mNetworkManager->getPlayerServerObjectId()) {
         mEntitiesController->addObject(state);
     }
 }
 
-void GameScreen::onGameObjectRemoved(ObjectState &state) {
+void GameScreen::onGameObjectRemoved(EntityState &state) {
     NetworkListener::onGameObjectRemoved(state);
     mEntitiesController->removeObject(state);
 }
 
 void GameScreen::onGameStateUpdated(const WorldState &state) {
-    for (const ObjectState obj : state.getObjects()) {
+    for (const EntityState obj : state.getObjects()) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
             mPlayerController->update(state.getServerTime(), obj);
+            mGameplayMenu->update(obj);
         } else {
 //            if (!mNetworkManager->isPlayerSkillObject(obj.getObjectId())) { // TODO keep for testing
                 mEntitiesController->update(obj);
@@ -121,4 +130,38 @@ void GameScreen::onSkillON(int skillId) {
 
 void GameScreen::onSkillOFF(int skillId) {
     mPlayerController->stopSkill(skillId);
+}
+
+ViewGroup *GameScreen::initSpaceBackground(Point<int> size, int starsCount) {
+    ViewGroup *result = new ViewGroup();
+    result->setSize(size);
+
+    int windowWidth = result->getWidth();
+    int windowHeight = result->getHeight();
+    for (int i = 0; i < starsCount; i++) {
+        View *circle = new View();
+        int size = MathUtils::randomInt(4, 10) * APP_RES.dimens()->DENSITY;
+        circle->setSize(size, size);
+
+        int x, y;
+        int yStep = windowHeight / starsCount;
+//            if (i < stars / 2) {
+        x = MathUtils::randomInt(0, windowWidth);
+        y = i * yStep;
+//            } else {
+//                x = i * 45;
+//                y = MathUtils::randomInt(0, windowHeight);
+//            }
+
+//            circle->setLocation(windowWidth * MathUtils::randRatio(), windowHeight * MathUtils::randRatio());
+        circle->setLocation(x, y);
+        circle->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
+            float alpha = MathUtils::randomInt(60, 210) / 255.0f;
+            canvas->draw(canvas->newObject()
+                                 ->setShape(RenderObject::SHAPE_TYPE_CIRCLE)
+                                 ->setRenderData(RenderData(RgbData(255, 255, 255), alpha)));
+        }));
+        result->addChild(circle);
+    }
+    return result;
 }

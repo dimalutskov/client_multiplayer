@@ -1,20 +1,32 @@
 #pragma once
 
 #include <wnd_engine/App.h>
+#include <wnd_engine/render/opengl/OpenGLRenderer.h>
+#include "AppShaderHandler.h"
+#include "game/GameScreen.h"
 
 using namespace wnd;
 
 class MyApp : public App {
 public:
 
-    MyApp(Platform *platform);
+    MyApp(Platform *platform) : App(platform) {}
 
-    virtual ~MyApp();
+    virtual ~MyApp() {}
 
-    void onAttachedToWindow(Renderer *renderer) override;
+    void onAttachedToWindow(Renderer *renderer) override {
+        App::onAttachedToWindow(renderer);
 
-    void onResume() override;
+        // Init custom shader handler for additional custom shaders
+        OpenGLRenderer *openGlRenderer = static_cast<OpenGLRenderer *>(renderer);
+        openGlRenderer->setShaderHandler(new AppShaderHandler());
 
-    void onPause() override;
+        GameScreen *gameScreen = new GameScreen(this);
+        gameScreen->attach();
+    }
+
+    void onResume() override {}
+
+    void onPause() override {}
 
 };

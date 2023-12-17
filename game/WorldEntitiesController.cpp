@@ -5,21 +5,21 @@
 #include "wnd_engine/game_v2/presenter/GameWorldPresenter.h"
 #include "wnd_engine/game_v2/presenter/GameObjectPresenter.h"
 #include "wnd_engine/game_v2/collisions/GameObjectCollisionHandler.h"
-#include "network/ObjectState.h"
-#include "GameConstants.h"
+#include "network/EntityState.h"
+#include "../AppConstants.h"
 
 WorldEntitiesController::WorldEntitiesController(GameWorldPresenter *worldPresenter) : mWorldPresenter(worldPresenter) {
 
 }
 
-WorldEntityPresenter *WorldEntitiesController::addObject(const ObjectState &state) {
+WorldEntityPresenter *WorldEntitiesController::addObject(const EntityState &state) {
     WorldEntityPresenter *objectPresenter = new WorldEntityPresenter(state);
     mEntities[state.getObjectId()] = objectPresenter;
     mWorldPresenter->addObjectPresenter(objectPresenter);
     return objectPresenter;
 }
 
-void WorldEntitiesController::removeObject(const ObjectState &state) {
+void WorldEntitiesController::removeObject(const EntityState &state) {
     auto entityRef = mEntities.find(state.getObjectId());
     if (entityRef != mEntities.end()) {
         entityRef->second->gameObject->destroy();
@@ -27,11 +27,10 @@ void WorldEntitiesController::removeObject(const ObjectState &state) {
     }
 }
 
-void WorldEntitiesController::update(const ObjectState &state) {
+void WorldEntitiesController::update(const EntityState &state) {
     WorldEntityPresenter *objectPresenter = 0;
     auto entityRef = mEntities.find(state.getObjectId());
     if (entityRef == mEntities.end()) {
-        // TODO Do not add future objects!!!
         objectPresenter = addObject(state);
     } else {
         objectPresenter = entityRef->second;

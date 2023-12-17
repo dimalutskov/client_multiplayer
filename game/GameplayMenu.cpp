@@ -1,7 +1,9 @@
 #include "GameplayMenu.h"
 #include "wnd_engine/Logger.h"
+#include "wnd_engine/layout/view/text/TextDrawer.h"
+#include "app/resources/AppRes.h"
 #include "network/GameNetworkManager.h"
-#include "GameConstants.h"
+#include "../AppConstants.h"
 
 GameplayMenu::GameplayMenu(ViewGroup *rootView, GameNetworkManager *networkManager, GameplayMenuCallback *callback)
     : view(rootView), mNetworkManager(networkManager), mCallback(callback) {
@@ -14,6 +16,7 @@ GameplayMenu::GameplayMenu(ViewGroup *rootView, GameNetworkManager *networkManag
         gamePadController->setGamePadTouchRect(Rect<int>(0, 0, view->getWidth() / 2, view->getHeight()));
     }, true);
     initSkills();
+    initPropertyDrawers();
 }
 
 void GameplayMenu::onShowGamePad(GamePadView *view, float x, float y) {
@@ -34,7 +37,12 @@ void GameplayMenu::onHideGamePad(GamePadView *view) {
 void GameplayMenu::onUpdateGamePad(GamePadView *view, int angle, int progress) {
     GamePadListener::onUpdateGamePad(view, angle, progress);
     mCallback->onGamePadMove(angle, progress);
-};
+}
+
+void GameplayMenu::update(const EntityState &playerState) {
+    mHealthTextDrawer->setText(playerState.get(EntityState::POS_HEALTH));
+    mEnergyTextDrawer->setText(playerState.get(EntityState::POS_ENERGY));
+}
 
 void GameplayMenu::handleTouchEvent(TouchEvent event, TouchEvent downEvent) {
     gamePadController->onTouchEvent(event);
@@ -89,7 +97,7 @@ void GameplayMenu::initSkills() {
     }));
     mSkillViews.push_back(skillView1);
     view->addChild(skillView1);
-    mSkillIds[skillView1->getId()] = GameConstants::SKILL_ID_SHOT;
+    mSkillIds[skillView1->getId()] = AppConstants::SKILL_TYPE_SHOT;
 
     // 2
     View *skillView2 = new View();
@@ -103,7 +111,7 @@ void GameplayMenu::initSkills() {
     }));
     mSkillViews.push_back(skillView2);
     view->addChild(skillView2);
-    mSkillIds[skillView2->getId()] = GameConstants::SKILL_ID_SPEED;
+    mSkillIds[skillView2->getId()] = AppConstants::SKILL_TYPE_ACCELERATION;
 
     view->subscribeSizeChanges([this, skillView1, skillView2](Point<int> oldSize, Point<int> newSize) {
         // 1
@@ -114,3 +122,25 @@ void GameplayMenu::initSkills() {
                                 skillView1->getY() - skillView2->getHeight() - 100);
     }, true);
 }
+
+void GameplayMenu::initPropertyDrawers() {
+    View *healthView = new View();
+    healthView->setSize(300, 100);
+    healthView->setLocation(100, 100);
+    mHealthTextDrawer = new TextDrawer(APP_RES.fontDefault(), 60);
+    mHealthTextDrawer->setText("101");
+    mHealthTextDrawer->setTextColor(RgbData(200, 0, 0));
+    healthView->addDrawer(mHealthTextDrawer);
+    this->view->addChild(healthView);
+
+    View *energyView = new View();
+    energyView->setSize(300, 100);
+    energyView->setLocation(100, 200);
+    mEnergyTextDrawer = new TextDrawer(APP_RES.fontDefault(), 60);
+    mEnergyTextDrawer->setText("102");
+    mEnergyTextDrawer->setTextColor(RgbData(200, 0, 200));
+    energyView->addDrawer(mEnergyTextDrawer);
+    this->view->addChild(energyView);
+}
+
+

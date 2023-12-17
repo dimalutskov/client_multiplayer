@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include "ObjectState.h"
+#include "EntityState.h"
 
 using namespace std;
 
@@ -11,7 +11,7 @@ private:
     uint64_t clientTime; // time when state received
     uint64_t clientWorldTime; // calculated client time to show this world state
     uint64_t serverWorldTime; // server time when this state was composed (received from server)
-    vector<ObjectState> objects;
+    vector<EntityState> objects;
 
 public:
     WorldState() {
@@ -25,7 +25,7 @@ public:
         this->clientWorldTime = clientWorldTime;
         this->serverWorldTime = stol(messageSplits[1]);
         for (int i = 2; i < messageSplits.size(); i++) {
-            objects.push_back(ObjectState(clientWorldTime, serverWorldTime, messageSplits[i]));
+            objects.push_back(EntityState(clientWorldTime, serverWorldTime, messageSplits[i]));
         }
     }
 
@@ -41,7 +41,7 @@ public:
         return serverWorldTime;
     }
 
-    const vector <ObjectState> &getObjects() const {
+    const vector <EntityState> &getObjects() const {
         return objects;
     }
 
