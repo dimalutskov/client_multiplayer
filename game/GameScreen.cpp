@@ -29,7 +29,7 @@ void GameScreen::attach() {
     RenderScreen *backgroundScreen = mApp->createRenderScreen(renderSize.getX(), renderSize.getY());
     ViewGroup *backgroundView = initSpaceBackground(renderSize, 50);
     backgroundView->setRenderScreen(backgroundScreen);
-//    mApp->attachView(backgroundView);
+    mApp->attachView(backgroundView);
 
     mApp->attachView(mWorldPresenter->getView());
     mApp->attachView(mGameplayMenu->getView());
@@ -95,20 +95,20 @@ void GameScreen::onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeigh
 void GameScreen::onConnection(bool connected) {
 }
 
-void GameScreen::onGameObjectAdded(EntityState &state) {
-    NetworkListener::onGameObjectAdded(state);
+void GameScreen::onGameEntityAdded(EntityState &state) {
+    NetworkListener::onGameEntityAdded(state);
     if (state.getObjectId() != mNetworkManager->getPlayerServerObjectId()) {
         mEntitiesController->addObject(state);
     }
 }
 
-void GameScreen::onGameObjectRemoved(EntityState &state) {
-    NetworkListener::onGameObjectRemoved(state);
-    mEntitiesController->removeObject(state);
+void GameScreen::onGameEntityDestroyed(EntityState &state) {
+    NetworkListener::onGameEntityDestroyed(state);
+    mEntitiesController->destroyObject(state);
 }
 
 void GameScreen::onGameStateUpdated(const WorldState &state) {
-    for (const EntityState obj : state.getObjects()) {
+    for (const EntityState &obj : state.getObjects()) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
             mPlayerController->update(state.getServerTime(), obj);
             mGameplayMenu->update(obj);

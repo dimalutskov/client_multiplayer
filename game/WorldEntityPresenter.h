@@ -10,10 +10,16 @@ class WorldEntityPresenter : public GameObjectPresenter {
 private:
     std::vector<EntityState> lastStates;
 
+    std::uint64_t destroyTime;
+
 public:
     WorldEntityPresenter(const EntityState &state);
 
     void update(const EntityState &state);
+
+    void destroy(std::uint64_t clientWorldTime) {
+        destroyTime = clientWorldTime;
+    }
 
     virtual void step(std::uint64_t time) override;
 

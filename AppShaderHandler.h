@@ -49,7 +49,7 @@ public:
         return ShaderHandler::getShaderType(obj);
     }
 
-    virtual void applyCustomShaderFields(Shader *shader, const RenderObject &obj) {
+    virtual void applyCustomShaderFields(Shader *shader, const RenderObject &obj) override {
         switch (obj.getShapeType()) {
             case AppConstants::SHADER_TYPE_SPACE:
                 return;

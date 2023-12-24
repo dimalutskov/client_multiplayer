@@ -33,7 +33,7 @@ public:
     void stopSkill(int skillId);
 
 //    void onGameObjectBeforeDestroy(GameObject *obj) override ;
-//    void onGameObjectDestroyed(GameObject *obj) override ;
+//    void onGameEntityDestroyed(GameObject *obj) override ;
     void onGameObjectCollision(GameObject *objA, GameObject *objB) override ;
     void onGameObjectCollisionEnd(GameObject *objA, GameObject *objB) override ;
 

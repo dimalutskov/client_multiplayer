@@ -16,27 +16,29 @@ public:
     static const int POS_ENERGY = 7;
 
 private:
-    vector<string> stateSplits;
-
-    uint64_t clientTime;
+    // Client world time time related to server time
+    uint64_t clientWorldTime;
     uint64_t serverTime;
 
+    vector<string> stateSplits;
+
 public:
-    EntityState(uint64_t clientTime, uint64_t serverTime, const EntityState &state, int x, int y) {
+    EntityState(uint64_t clientTime, uint64_t serverTime, const EntityState &state, int x, int y)
+            : clientWorldTime(clientTime), serverTime(serverTime){
         for (string stateSplit : state.stateSplits) {
             this->stateSplits.push_back(stateSplit);
         }
-        stateSplits[POS_X] = to_string(x);
-        stateSplits[POS_Y] = to_string(y);
+        this->stateSplits[POS_X] = to_string(x);
+        this->stateSplits[POS_Y] = to_string(y);
     }
 
     EntityState(uint64_t clientTime, uint64_t serverTime, string &stateString)
-    : clientTime(clientTime), serverTime(serverTime) {
+            : clientWorldTime(clientTime), serverTime(serverTime) {
         wnd::CollectionUtils::split(this->stateSplits, stateString, ',');
     }
 
     const uint64_t &getClientTime() const {
-        return clientTime;
+        return clientWorldTime;
     }
 
     const uint64_t &getServerTime() const {
@@ -47,7 +49,7 @@ public:
         return stateSplits[POS_ID];
     }
 
-    const int &getObjectType() const {
+    const int getObjectType() const {
         return stoi(stateSplits[POS_TYPE]);
     }
 

@@ -15,6 +15,7 @@ PlayerController::PlayerController(GameWorldPresenter *worldPresenter, GameNetwo
     // Game object
     GameObject *playerObject = new GameObject(AppConstants::ENTITY_TYPE_SPACESHIP);
     playerObject->setSize(AppConstants::SPACESHIP_SIZE, AppConstants::SPACESHIP_SIZE);
+    playerObject->setCenterLocation(0, 0);
     playerObject->addListener(this);
 
     // View
@@ -31,7 +32,7 @@ PlayerController::PlayerController(GameWorldPresenter *worldPresenter, GameNetwo
     mWorldPresenter->addObjectPresenter(mObjectPresenter);
     mWorldPresenter->setCameraObject(mObjectPresenter->gameObject);
 
-    mMoveAction = new ObjectMovementAction(playerObject->getX(), playerObject->getY(), playerObject->getAngle(),
+    mMoveAction = new ObjectMovementAction(playerObject->getCX(), playerObject->getCY(), playerObject->getAngle(),
                                            [this](std::uint64_t time, float x, float y, float angle) {
         onActionMove(x, y, angle);
     });

@@ -9,9 +9,9 @@
 
 
 WorldEntityPresenter::WorldEntityPresenter(const EntityState &state) : GameObjectPresenter(createObject(state), createView(state)) {
+    destroyTime = 0;
     if (state.getObjectType() == AppConstants::ENTITY_TYPE_SHOT) {
         // As shots created on the server with client time(in past) - need to predict previous state
-
         int backAngle = MathUtils::validateAngle(state.getAngle() + 270);
         long time = 2000;
         uint64_t clientTime = state.getClientTime() - time; // TODO
@@ -22,6 +22,12 @@ WorldEntityPresenter::WorldEntityPresenter(const EntityState &state) : GameObjec
         lastStates.push_back(EntityState(clientTime, serverTime, state, x, y));
     }
     lastStates.push_back(state);
+
+    BaseAppAction *destroyAction = new BaseAppAction([this](std::uint64_t time, std::uint64_t passedTime, float progress) {
+        view->setAlpha(1 - progress);
+    });
+    destroyAction->setDuration(500);
+    setDestroyAction(destroyAction);
 }
 
 void WorldEntityPresenter::update(const EntityState &state) {
@@ -35,9 +41,9 @@ GameObject *WorldEntityPresenter::createObject(const EntityState &state) {
     // Game object
     GameObject *object = new GameObject(state.getObjectType()); // TODO
     float y = state.getY();
-    object->setCenterLocation(state.getX(), state.getY());
     object->setAngle(state.getAngle());
     object->setSize(state.getSize(), state.getSize());
+    object->setCenterLocation(state.getX(), state.getY());
     return object;
 }
 
@@ -54,6 +60,11 @@ View *WorldEntityPresenter::createView(const EntityState &state) {
 
 void WorldEntityPresenter::step(std::uint64_t time) {
     GameObjectPresenter::step(time);
+
+    if (destroyTime > 0 && destroyTime < time) {
+        gameObject->destroy();
+        return;
+    }
 
     EntityState *stateBefore = 0;
     EntityState *stateAfter = 0;

@@ -19,10 +19,11 @@ WorldEntityPresenter *WorldEntitiesController::addObject(const EntityState &stat
     return objectPresenter;
 }
 
-void WorldEntitiesController::removeObject(const EntityState &state) {
+void WorldEntitiesController::destroyObject(const EntityState &state) {
     auto entityRef = mEntities.find(state.getObjectId());
     if (entityRef != mEntities.end()) {
-        entityRef->second->gameObject->destroy();
+        entityRef->second->update(state);
+        entityRef->second->destroy(state.getClientTime());
         mEntities.erase(entityRef);
     }
 }

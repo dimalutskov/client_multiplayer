@@ -18,7 +18,7 @@ public:
     WorldEntitiesController(GameWorldPresenter *worldPresenter);
 
     WorldEntityPresenter *addObject(const EntityState &state);
-    void removeObject(const EntityState &state);
+    void destroyObject(const EntityState &state);
     void update(const EntityState &state);
 
 };

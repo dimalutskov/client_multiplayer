@@ -35,8 +35,8 @@ public:
     virtual void onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeight, int newHeight) override;
 
     virtual void onConnection(bool connected) override;
-    virtual void onGameObjectAdded(EntityState &state) override;
-    virtual void onGameObjectRemoved(EntityState &state) override;
+    virtual void onGameEntityAdded(EntityState &state) override;
+    virtual void onGameEntityDestroyed(EntityState &state) override;
     virtual void onGameStateUpdated(const WorldState &state) override;
 
     virtual void onGamePadMove(int angle, int progress) override;

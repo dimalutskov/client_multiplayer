@@ -49,6 +49,21 @@ public:
      */
     static const string SERVER_MSG_RESPONSE_SKILL_OBJECTS;
 
+    /**
+     * Notify about any new active influence(skill, shot, recover, etc) applied to any world entity
+     * {MSG_TYPE};{SERVER_TIME};{ENTITY_RECEIVER_ID};{INFLUENCE_DESC};
+     * INFLUENCE_DESC - influenceType,skillType,ownerId,values(described for each type)
+     */
+    static const string SERVER_MSG_INFLUENCE_ON;
+
+    /**
+     * Notify about stop applying influence. Notice - for single influences (like single shot or one time skills)
+     * this message wont be sent
+     * {MSG_TYPE};{SERVER_TIME};{ENTITY_RECEIVER_ID};{INFLUENCE_DESC};
+     * INFLUENCE_DESC - influenceType,skillType,ownerId,values(described for each type)
+     */
+    static const string SERVER_MSG_INFLUENCE_OFF;
+
 
     /////////////////// CLIENT_MESSAGES ///////////////////////////
 
@@ -82,6 +97,8 @@ const string NetworkProtocol::SERVER_MSG_STATE = "state";
 const string NetworkProtocol::SERVER_MSG_OBJECT_ADDED = "objectAdded";
 const string NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED = "objectDestroyed";
 const string NetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS = "skillObjects";
+const string NetworkProtocol::SERVER_MSG_INFLUENCE_ON = "influenceOn";
+const string NetworkProtocol::SERVER_MSG_INFLUENCE_OFF = "influenceOff";
 
 const string NetworkProtocol::CLIENT_MSG_MOVEMENT = "move";
 const string NetworkProtocol::CLIENT_MSG_SKILL_ON = "skillON";

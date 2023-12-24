@@ -3,7 +3,6 @@
 #include "WorldState.h"
 #include "wnd_engine/Logger.h"
 #include "wnd_engine/utils/CollectionUtils.h"
-#include "PlayerInfo.h"
 #include <vector>
 #include <string>
 
@@ -48,7 +47,7 @@ void GameNetworkManager::skillOFF(int skillId) {
     long timeAfterLastFrame = mPlatform->milliseconds() - lastWorldState.getClientTime();
     uint64_t calculatedServerTime = lastWorldState.getServerTime() + timeAfterLastFrame - getWorldTimeDiff();
     std::ostringstream ss;
-    ss << NetworkProtocol::CLIENT_MSG_SKILL_OFF << ";" << calculatedServerTime << ";" << skillId;
+    ss << NetworkProtocol::CLIENT_MSG_SKILL_OFF << ";" << calculatedServerTime << ";" << skillId << ";";
     mWebSocket->send(ss.str());
 }
 
@@ -93,14 +92,14 @@ void GameNetworkManager::onMessage(std::string message) {
 
         ss << "onMsgConnected " << playerServerObjectId << " updateInterval: " << serverUpdateInterval;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
-//        ObjectState obj(clientTime, splits[2]);
-//        mListener->onGameObjectAdded(obj);
+//        ObjectState obj(clientWorldTime, splits[2]);
+//        mListener->onGameEntityAdded(obj);
         ss << "onObjectAdded " << message;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
         uint64_t serverTime = stol(splits[1]);
-        ObjectState obj(clientWorldTime, serverTime, splits[2]);
-        mListener->onGameObjectRemoved(obj);
-        skillObjectIds.erase(obj.getObjectId());
+        EntityState obj(clientWorldTime, serverTime, splits[2]);
+        mListener->onGameEntityDestroyed(obj);
+        skillObjectIds.erase(obj.getObjectId()); // TODO????
 
         ss << "onObjectDestroyed " << message;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS) {
