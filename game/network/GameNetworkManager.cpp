@@ -105,6 +105,18 @@ void GameNetworkManager::onMessage(std::string message) {
         skillObjectIds.erase(obj.getObjectId()); // TODO????
 
         ss << "onObjectDestroyed " << message;
+    } else if (splits[0] == NetworkProtocol::SERVER_MSG_INFLUENCE_ON) {
+//        std::uint64_t time = stol(splits[1]);
+//        std::string entityId = splits[2];
+//        EntityInfluence influence(splits[3]);
+//        mListener->onAttachEntityInfluence(entityId, influence);
+        ss << "onAttachInfluence " << message;
+    } else if (splits[0] == NetworkProtocol::SERVER_MSG_INFLUENCE_OFF) {
+//        std::uint64_t time = stol(splits[1]);
+//        std::string entityId = splits[2];
+//        EntityInfluence influence(splits[3]);
+//        mListener->onDetachEntityInfluence(entityId, influence);
+        ss << "onDetachInfluence " << message;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS) {
         std::uint64_t time = stol(splits[1]);
         for (int i = 2; i < splits.size(); i++) {

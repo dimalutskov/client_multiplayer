@@ -4,6 +4,7 @@
 #include "wnd_engine/game_v2/presenter/GameWorldPresenter.h"
 #include "wnd_engine/game_v2/collisions/GameObjectCollisionHandler.h"
 #include "network/EntityState.h"
+#include "EntityInfluenceDrawer.h"
 #include "wnd_engine/Logger.h"
 #include "../AppConstants.h"
 
@@ -17,6 +18,29 @@ BaseEntityPresenter::BaseEntityPresenter(const EntityState &state) : GameObjectP
     });
     destroyAction->setDuration(500);
     setDestroyAction(destroyAction);
+}
+
+void BaseEntityPresenter::attachInfluence(EntityInfluence &influence) {
+    if (true) { // single influences
+        auto *influenceDrawer = new EntityInfluenceDrawer(influence);
+        view->addDrawer(influenceDrawer);
+
+        auto *influenceAction = new BaseAppAction([this, influenceDrawer](std::uint64_t time, std::uint64_t passedTime, float progress) {
+            influenceDrawer->updateProgress(progress);
+            if (progress == 1.0) {
+                view->removeDrawer(influenceDrawer);
+            }
+        });
+        influenceAction->setDuration(2000);
+        view->addAction(influenceAction);
+    } else {
+        influences.push_back(influence);
+    }
+
+}
+
+void BaseEntityPresenter::detachInfluence(EntityInfluence &influence) {
+    influences.erase(std::remove(influences.begin(), influences.end(), influence), influences.end());
 }
 
 void BaseEntityPresenter::update(const EntityState &state) {

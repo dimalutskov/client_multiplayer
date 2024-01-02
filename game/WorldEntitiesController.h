@@ -6,6 +6,7 @@
 class WorldEntityPresenter;
 class GameWorldPresenter;
 class EntityState;
+class EntityInfluence;
 
 class WorldEntitiesController {
 private:
@@ -20,5 +21,7 @@ public:
     WorldEntityPresenter *addObject(const EntityState &state);
     void destroyObject(const EntityState &state);
     void update(const EntityState &state);
+    void attachInfluence(std::string entityId, EntityInfluence &influence);
+    void detachInfluence(std::string entityId, EntityInfluence &influence);
 
 };

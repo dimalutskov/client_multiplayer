@@ -2,6 +2,7 @@
 
 #include "wnd_engine/game_v2/presenter/GameObjectPresenter.h"
 #include "wnd_engine/game/action/ObjectMovementAction.h"
+#include "network/EntityInfluence.h"
 
 class EntityState;
 class GameObject;
@@ -10,10 +11,17 @@ class BaseEntityPresenter : public GameObjectPresenter {
 protected:
     int entityType;
 
+    std::vector<EntityInfluence> influences;
+    // key - influenceId
+    std::unordered_map<std::string, ViewDrawer*> influenceDrawers;
+
     std::uint64_t destroyTime;
 
 public:
     BaseEntityPresenter(const EntityState &state);
+
+    void attachInfluence(EntityInfluence &influence);
+    void detachInfluence(EntityInfluence &influence);
 
     virtual void update(const EntityState &state);
 

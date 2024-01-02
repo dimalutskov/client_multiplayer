@@ -57,6 +57,14 @@ void PlayerController::join(const EntityState &state) {
 void PlayerController::update(const EntityState &state) {
 }
 
+void PlayerController::attachInfluence(EntityInfluence &influence) {
+    mObjectPresenter->attachInfluence(influence);
+}
+
+void PlayerController::detachInfluence(EntityInfluence &influence) {
+    mObjectPresenter->detachInfluence(influence);
+}
+
 void PlayerController::destroy() {
     mObjectPresenter->destroy(0);
 }
@@ -103,8 +111,12 @@ void PlayerController::startSkill(int skillId) {
         mWorldPresenter->addObjectPresenter(new GameObjectPresenter(obj, view));
         mWorldPresenter->getWorld()->addAction(moveAction);
     } else if (skillId == AppConstants::SKILL_TYPE_ACCELERATION) {
-        mMoveAction->setSpeed(AppConstants::MAX_SPEED * 2);
-        speedSkill = true;
+//        mMoveAction->setSpeed(AppConstants::MAX_SPEED * 2);
+//        speedSkill = true;
+
+        string stateS = "1,0,1,1,1";
+        EntityInfluence influence(stateS);
+        attachInfluence(influence);
     }
 
     mNetworkManager->skillON(skillId, playerObj->getCX(), playerObj->getCY(), playerObj->getAngle());
@@ -123,9 +135,4 @@ void PlayerController::onActionMove(float x, float y, float angle) {
     mObjectPresenter->gameObject->setCenterLocation(x, y);
     mObjectPresenter->gameObject->setAngle(angle);
     mNetworkManager->updatePlayerMovement(x, y, angle, mMoveAction->getSpeed());
-}
-
-void PlayerController::step(std::uint64_t time) {
-    AppAction::step(time);
-
 }

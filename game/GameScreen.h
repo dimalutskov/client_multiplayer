@@ -38,6 +38,8 @@ public:
     virtual void onJoinGame(EntityState &playerState) override;
     virtual void onGameEntityAdded(EntityState &state) override;
     virtual void onGameEntityDestroyed(EntityState &state) override;
+    virtual void onAttachEntityInfluence(std::string entityId, EntityInfluence &influence) override;
+    virtual void onDetachEntityInfluence(std::string entityId, EntityInfluence &influence) override;
     virtual void onGameStateUpdated(const WorldState &state) override;
 
     virtual void onButtonClick(int buttonId) override;

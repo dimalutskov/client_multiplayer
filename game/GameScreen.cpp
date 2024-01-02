@@ -102,7 +102,6 @@ void GameScreen::onConnection(bool connected) {
 }
 
 void GameScreen::onGameEntityAdded(EntityState &state) {
-    NetworkListener::onGameEntityAdded(state);
     if (state.getObjectId() != mNetworkManager->getPlayerServerObjectId()) {
         mEntitiesController->addObject(state);
     }
@@ -112,8 +111,23 @@ void GameScreen::onGameEntityDestroyed(EntityState &state) {
     if (state.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
         mPlayerController->destroy();
     } else {
-        NetworkListener::onGameEntityDestroyed(state);
         mEntitiesController->destroyObject(state);
+    }
+}
+
+void GameScreen::onAttachEntityInfluence(std::string entityId, EntityInfluence &influence) {
+    if (entityId == mNetworkManager->getPlayerServerObjectId()) {
+        mPlayerController->attachInfluence(influence);
+    } else {
+        mEntitiesController->attachInfluence(entityId, influence);
+    }
+}
+
+void GameScreen::onDetachEntityInfluence(std::string entityId, EntityInfluence &influence) {
+    if (entityId == mNetworkManager->getPlayerServerObjectId()) {
+        mPlayerController->detachInfluence(influence);
+    } else {
+        mEntitiesController->detachInfluence(entityId, influence);
     }
 }
 

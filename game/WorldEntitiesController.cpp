@@ -38,3 +38,17 @@ void WorldEntitiesController::update(const EntityState &state) {
     }
     objectPresenter->update(state);
 }
+
+void WorldEntitiesController::attachInfluence(std::string entityId, EntityInfluence &influence) {
+    auto entityRef = mEntities.find(entityId);
+    if (entityRef != mEntities.end()) {
+        entityRef->second->attachInfluence(influence);
+    }
+}
+
+void WorldEntitiesController::detachInfluence(std::string entityId, EntityInfluence &influence) {
+    auto entityRef = mEntities.find(entityId);
+    if (entityRef != mEntities.end()) {
+        entityRef->second->detachInfluence(influence);
+    }
+}

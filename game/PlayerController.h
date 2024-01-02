@@ -10,6 +10,7 @@ class GameWorldPresenter;
 class BaseEntityPresenter;
 class GameNetworkManager;
 class EntityState;
+class EntityInfluence;
 class GameNetworkManager;
 
 class PlayerController : public AppActionGroup, public GameObjectListener {
@@ -28,6 +29,8 @@ public:
 
     void join(const EntityState &state);
     void update(const EntityState &state);
+    void attachInfluence(EntityInfluence &influence);
+    void detachInfluence(EntityInfluence &influence);
     void destroy();
 
     void onGamePadMove(int angle, int progress);
@@ -38,8 +41,6 @@ public:
 //    void onGameEntityDestroyed(GameObject *obj) override ;
     void onGameObjectCollision(GameObject *objA, GameObject *objB) override ;
     void onGameObjectCollisionEnd(GameObject *objA, GameObject *objB) override ;
-
-    virtual void step(std::uint64_t time) override;
 
 private:
 
