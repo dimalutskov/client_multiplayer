@@ -7,7 +7,7 @@
 using namespace wnd;
 
 class GameWorldPresenter;
-class GameObjectPresenter;
+class BaseEntityPresenter;
 class GameNetworkManager;
 class EntityState;
 class GameNetworkManager;
@@ -17,7 +17,7 @@ private:
     GameWorldPresenter *const mWorldPresenter;
     GameNetworkManager *const mNetworkManager;
 
-    GameObjectPresenter *mObjectPresenter;
+    BaseEntityPresenter *mObjectPresenter;
 
     ObjectMovementAction *mMoveAction;
 
@@ -26,7 +26,9 @@ private:
 public:
     PlayerController(GameWorldPresenter *worldPresenter, GameNetworkManager *networkManager);
 
-    void update(long serverIteration, const EntityState &state);
+    void join(const EntityState &state);
+    void update(const EntityState &state);
+    void destroy();
 
     void onGamePadMove(int angle, int progress);
     void startSkill(int skillId);

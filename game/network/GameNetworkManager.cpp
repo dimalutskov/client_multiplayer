@@ -15,6 +15,12 @@ GameNetworkManager::GameNetworkManager(wnd::Platform *platform, NetworkListener 
     serverUpdateInterval = 0;
 }
 
+void GameNetworkManager::join() {
+    std::ostringstream ss;
+    ss << NetworkProtocol::CLIENT_MSG_JOIN << ";";
+    mWebSocket->send(ss.str());
+}
+
 void GameNetworkManager::connect() {
     mWebSocket->connect();
 }
@@ -80,20 +86,17 @@ void GameNetworkManager::onMessage(std::string message) {
         CollectionUtils::split(serverInfoSplits, splits[1], ',');
         uint64_t serverTime = stol(serverInfoSplits[0]);
         serverUpdateInterval = stol(serverInfoSplits[1]);
-
-//        ss << "!!! " << serverInfoSplits[0] << " " << serverInfoSplits[1];
-//        wnd::Logger::log(ss.str());
-
-        // Player obj id
-        playerServerObjectId = splits[2];
-
-        // Player info
-//        PlayerInfo playerInfo(splits[3]);
-
         ss << "onMsgConnected " << playerServerObjectId << " updateInterval: " << serverUpdateInterval;
+    } else if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_JOIN) {
+        uint64_t serverTime = stol(splits[1]);
+        EntityState entity(clientWorldTime, serverTime, splits[2]);
+        playerServerObjectId = entity.getObjectId();
+        mListener->onJoinGame(entity);
+        ss << "onJoin " << message;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
-//        ObjectState obj(clientWorldTime, splits[2]);
-//        mListener->onGameEntityAdded(obj);
+        uint64_t serverTime = stol(splits[1]);
+        EntityState entity(clientWorldTime, serverTime, splits[2]);
+        mListener->onGameEntityAdded(entity);
         ss << "onObjectAdded " << message;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
         uint64_t serverTime = stol(splits[1]);

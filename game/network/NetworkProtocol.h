@@ -19,10 +19,16 @@ public:
 
     /**
      * Provides server information and objectId for this connected client to retrieve current player state from server state message
-     * {MSG_TYPE};{SERVER_INFO};{OBJECT_ID};{PLAYER_INFO}
+     * {MSG_TYPE};{SERVER_INFO};
      * SERVER_INFO: "{SERVER_TIME},{UPDATE_INTERVAL}"
      */
     static const string SERVER_MSG_RESPONSE_CONNECTED;
+
+    /**
+     * Provides objectId for this joined client to retrieve current player state from server state message
+     * {MSG_TYPE};{SERVER_TIME};{OBJECT_STATE}
+     */
+    static const string SERVER_MSG_RESPONSE_JOIN;
 
     /**
     * Provides current game state with all required game objects, etc.
@@ -68,6 +74,12 @@ public:
     /////////////////// CLIENT_MESSAGES ///////////////////////////
 
     /**
+     * Join client as a world entity. Entity's id will be provided in response message
+     * {MSG_TYPE};
+     */
+    static const string CLIENT_MSG_JOIN;
+
+    /**
     * Provides player movement attributes
     * {MSG_TYPE};{SERVER_TIME};{x};{y};{angle};{speed}
     */
@@ -93,6 +105,7 @@ public:
 const string NetworkProtocol::SERVER_URL = "wss://dl-websockets-25f48806cc22.herokuapp.com/websocket";
 
 const string NetworkProtocol::SERVER_MSG_RESPONSE_CONNECTED = "connected";
+const string NetworkProtocol::SERVER_MSG_RESPONSE_JOIN = "join";
 const string NetworkProtocol::SERVER_MSG_STATE = "state";
 const string NetworkProtocol::SERVER_MSG_OBJECT_ADDED = "objectAdded";
 const string NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED = "objectDestroyed";
@@ -100,6 +113,7 @@ const string NetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS = "skillObjects"
 const string NetworkProtocol::SERVER_MSG_INFLUENCE_ON = "influenceOn";
 const string NetworkProtocol::SERVER_MSG_INFLUENCE_OFF = "influenceOff";
 
+const string NetworkProtocol::CLIENT_MSG_JOIN = "join";
 const string NetworkProtocol::CLIENT_MSG_MOVEMENT = "move";
 const string NetworkProtocol::CLIENT_MSG_SKILL_ON = "skillON";
 const string NetworkProtocol::CLIENT_MSG_SKILL_OFF = "skillOFF";

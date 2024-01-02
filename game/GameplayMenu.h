@@ -37,9 +37,11 @@ public:
     virtual void onHideGamePad(GamePadView *view);
     virtual void onUpdateGamePad(GamePadView *view, int angle, int progress);
 
+    void showPlayerControls();
     void update(const EntityState &playerState);
 
 private:
+    void initMenu();
     void initSkills();
     void initPropertyDrawers();
     void handleTouchEvent(TouchEvent event, TouchEvent downEvent);

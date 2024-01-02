@@ -92,6 +92,12 @@ void GameScreen::onAppPaused() {
 void GameScreen::onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeight, int newHeight) {
 }
 
+void GameScreen::onJoinGame(EntityState &playerState) {
+    mGameplayMenu->showPlayerControls();
+
+    mPlayerController->join(playerState);
+}
+
 void GameScreen::onConnection(bool connected) {
 }
 
@@ -103,20 +109,30 @@ void GameScreen::onGameEntityAdded(EntityState &state) {
 }
 
 void GameScreen::onGameEntityDestroyed(EntityState &state) {
-    NetworkListener::onGameEntityDestroyed(state);
-    mEntitiesController->destroyObject(state);
+    if (state.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
+        mPlayerController->destroy();
+    } else {
+        NetworkListener::onGameEntityDestroyed(state);
+        mEntitiesController->destroyObject(state);
+    }
 }
 
 void GameScreen::onGameStateUpdated(const WorldState &state) {
     for (const EntityState &obj : state.getObjects()) {
         if (obj.getObjectId() == mNetworkManager->getPlayerServerObjectId()) {
-            mPlayerController->update(state.getServerTime(), obj);
+            mPlayerController->update(obj);
             mGameplayMenu->update(obj);
         } else {
 //            if (!mNetworkManager->isPlayerSkillObject(obj.getObjectId())) { // TODO keep for testing
                 mEntitiesController->update(obj);
 //            }
         }
+    }
+}
+
+void GameScreen::onButtonClick(int buttonId) {
+    if (buttonId == GameplayMenuCallback::BTN_ID_PLAY) {
+        mNetworkManager->join();
     }
 }
 

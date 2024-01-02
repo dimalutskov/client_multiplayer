@@ -15,8 +15,10 @@ GameplayMenu::GameplayMenu(ViewGroup *rootView, GameNetworkManager *networkManag
     view->subscribeSizeChanges([this](Point<int> oldSize, Point<int> newSize) {
         gamePadController->setGamePadTouchRect(Rect<int>(0, 0, view->getWidth() / 2, view->getHeight()));
     }, true);
-    initSkills();
-    initPropertyDrawers();
+    initMenu();
+
+    mHealthTextDrawer = 0;
+    mEnergyTextDrawer = 0;
 }
 
 void GameplayMenu::onShowGamePad(GamePadView *view, float x, float y) {
@@ -37,6 +39,11 @@ void GameplayMenu::onHideGamePad(GamePadView *view) {
 void GameplayMenu::onUpdateGamePad(GamePadView *view, int angle, int progress) {
     GamePadListener::onUpdateGamePad(view, angle, progress);
     mCallback->onGamePadMove(angle, progress);
+}
+
+void GameplayMenu::showPlayerControls() {
+    initSkills();
+    initPropertyDrawers();
 }
 
 void GameplayMenu::update(const EntityState &playerState) {
@@ -81,6 +88,24 @@ void GameplayMenu::handleTouchEvent(TouchEvent event, TouchEvent downEvent) {
             }
             break;
     }
+}
+
+void GameplayMenu::initMenu() {
+    View *playView = new View();
+    playView->setSize(100, 100);
+    playView->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
+        canvas->draw(canvas->newObject()
+                             ->setRenderData(RenderData(
+                                     RgbData(0, 0, 200)
+                             )));
+    }));
+    playView->setClickListener([this](View *view) {
+        mCallback->onButtonClick(GameplayMenuCallback::BTN_ID_PLAY);
+    });
+    view->addChild(playView);
+    view->subscribeSizeChanges([this, playView](Point<int> oldSize, Point<int> newSize) {
+        playView->setLocation(view->getWidth() - playView->getWidth() - 100, 100);
+    }, true);
 }
 
 void GameplayMenu::initSkills() {
@@ -142,5 +167,3 @@ void GameplayMenu::initPropertyDrawers() {
     energyView->addDrawer(mEnergyTextDrawer);
     this->view->addChild(energyView);
 }
-
-

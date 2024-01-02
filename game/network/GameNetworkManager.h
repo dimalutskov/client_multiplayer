@@ -32,9 +32,9 @@ public:
     GameNetworkManager(Platform *platform, NetworkListener *listener);
 
     void connect();
-
     void disconnect();
 
+    void join();
     void updatePlayerMovement(int x, int y, int angle, int speed);
 
     void skillON(int skillId, int x, int y, int angle);
