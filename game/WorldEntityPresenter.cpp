@@ -33,7 +33,7 @@ void WorldEntityPresenter::update(const EntityState &state) {
 }
 
 void WorldEntityPresenter::step(std::uint64_t time) {
-    GameObjectPresenter::step(time);
+    BaseEntityPresenter::step(time);
 
     if (destroyTime > 0 && destroyTime < time) {
         gameObject->destroy();

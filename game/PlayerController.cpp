@@ -111,12 +111,8 @@ void PlayerController::startSkill(int skillId) {
         mWorldPresenter->addObjectPresenter(new GameObjectPresenter(obj, view));
         mWorldPresenter->getWorld()->addAction(moveAction);
     } else if (skillId == AppConstants::SKILL_TYPE_ACCELERATION) {
-//        mMoveAction->setSpeed(AppConstants::MAX_SPEED * 2);
-//        speedSkill = true;
-
-        string stateS = "1,0,1,1,1";
-        EntityInfluence influence(stateS);
-        attachInfluence(influence);
+        mMoveAction->setSpeed(AppConstants::MAX_SPEED * 2);
+        speedSkill = true;
     }
 
     mNetworkManager->skillON(skillId, playerObj->getCX(), playerObj->getCY(), playerObj->getAngle());

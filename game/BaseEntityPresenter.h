@@ -11,7 +11,8 @@ class BaseEntityPresenter : public GameObjectPresenter {
 protected:
     int entityType;
 
-    std::vector<EntityInfluence> influences;
+    std::vector<EntityInfluence> pendingInfluences;
+    std::vector<EntityInfluence> attachedInfluences;
     // key - influenceId
     std::unordered_map<std::string, ViewDrawer*> influenceDrawers;
 
@@ -34,4 +35,6 @@ public:
 protected:
     virtual GameObject *createObject(const EntityState &state);
     virtual View *createView(const EntityState &state);
+
+    void onAttachInfluence(EntityInfluence &influence);
 };

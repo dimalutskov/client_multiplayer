@@ -39,13 +39,13 @@ public:
 
     /**
      * Provides object which was added to the game world
-     * {MSG_TYPE};{SERVER_TIME};{OBJECT_STATE};
+     * {MSG_TYPE};{SERVER_TIME};{OBJECT_CREATE_TIME};{OBJECT_STATE};
      */
     static const string SERVER_MSG_OBJECT_ADDED;
 
     /**
     * Provides object which was removed from the game world
-    * {MSG_TYPE};{SERVER_TIME},{OBJECT_STATE};
+    * {MSG_TYPE};{SERVER_TIME};{OBJECT_DESTROY_TIME};{OBJECT_STATE};
     */
     static const string SERVER_MSG_OBJECT_DESTROYED;
 
@@ -63,7 +63,7 @@ public:
     static const string SERVER_MSG_INFLUENCE_ON;
 
     /**
-     * Notify about stop applying influence. Notice - for single influences (like single shot or one time skills)
+     * Notify about stop applying influence. Notice - for single attachedInfluences (like single shot or one time skills)
      * this message wont be sent
      * {MSG_TYPE};{SERVER_TIME};{ENTITY_RECEIVER_ID};{INFLUENCE_DESC};
      * INFLUENCE_DESC - influenceType,skillType,ownerId,values(described for each type)

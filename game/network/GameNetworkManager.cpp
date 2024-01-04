@@ -80,6 +80,8 @@ void GameNetworkManager::onMessage(std::string message) {
     if (splits.empty()) {
         return;
     }
+
+    // CONNECTED
     if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_CONNECTED) {
         // Server info
         vector<string> serverInfoSplits;
@@ -87,29 +89,39 @@ void GameNetworkManager::onMessage(std::string message) {
         uint64_t serverTime = stol(serverInfoSplits[0]);
         serverUpdateInterval = stol(serverInfoSplits[1]);
         ss << "onMsgConnected " << playerServerObjectId << " updateInterval: " << serverUpdateInterval;
-    } else if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_JOIN) {
+    }
+    // JOIN
+    else if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_JOIN) {
         uint64_t serverTime = stol(splits[1]);
         EntityState entity(clientWorldTime, serverTime, splits[2]);
         playerServerObjectId = entity.getObjectId();
         mListener->onJoinGame(entity);
         ss << "onJoin " << message;
-    } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
+    }
+    // ADD|DESTROY
+    else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_ADDED ||
+        splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
         uint64_t serverTime = stol(splits[1]);
-        EntityState entity(clientWorldTime, serverTime, splits[2]);
-        mListener->onGameEntityAdded(entity);
-        ss << "onObjectAdded " << message;
-    } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
-        uint64_t serverTime = stol(splits[1]);
-        EntityState obj(clientWorldTime, serverTime, splits[2]);
-        mListener->onGameEntityDestroyed(obj);
-        skillObjectIds.erase(obj.getObjectId()); // TODO????
-
-        ss << "onObjectDestroyed " << message;
-    } else if (splits[0] == NetworkProtocol::SERVER_MSG_INFLUENCE_ON) {
-//        std::uint64_t time = stol(splits[1]);
-//        std::string entityId = splits[2];
-//        EntityInfluence influence(splits[3]);
-//        mListener->onAttachEntityInfluence(entityId, influence);
+        uint64_t objectTime = stol(splits[2]);
+        std::uint64_t entityClientTime = clientWorldTime - (serverTime - objectTime);
+        EntityState entity(entityClientTime, serverTime, splits[3]);
+        if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
+            mListener->onGameEntityAdded(entity);
+            ss << "onObjectAdded " << message;
+        } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
+            mListener->onGameEntityDestroyed(entity);
+            skillObjectIds.erase(entity.getObjectId()); // TODO????
+            ss << "onObjectDestroyed " << message;
+        }
+    }
+    // INFLUENCE ON
+    else if (splits[0] == NetworkProtocol::SERVER_MSG_INFLUENCE_ON) {
+        std::uint64_t serverTime = stol(splits[1]);
+        std::string entityId = splits[2];
+        std::uint64_t influenceAttachTime = stol(splits[3]);
+        std::uint64_t attachTime = clientWorldTime - (serverTime - influenceAttachTime);
+        EntityInfluence influence(attachTime, splits[4]);
+        mListener->onAttachEntityInfluence(entityId, influence);
         ss << "onAttachInfluence " << message;
     } else if (splits[0] == NetworkProtocol::SERVER_MSG_INFLUENCE_OFF) {
 //        std::uint64_t time = stol(splits[1]);
