@@ -1,7 +1,7 @@
 #pragma once
 
 #include <vector>
-#include "wnd_engine/utils/CollectionUtils.h"
+#include "engine/utils/CollectionUtils.h"
 
 using namespace std;
 
@@ -17,7 +17,7 @@ private:
 public:
     EntityInfluence(std::uint64_t clientWorldTime, string &stateString) {
         vector<string> stateSplits;
-        wnd::CollectionUtils::split(stateSplits, stateString, ',');
+        CollectionUtils::split(stateSplits, stateString, ',');
         this->attachClientWorldTime = clientWorldTime;
         this->type = stoi(stateSplits[0]);
         this->skillType = stoi(stateSplits[1]);

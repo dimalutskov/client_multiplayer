@@ -1,26 +1,21 @@
 #pragma once
 
 #include <engine/App.h>
-#include <engine/AppLifecycleListener.h>
 #include <engine/layout/view/ViewGroup.h>
 #include "GameplayMenuCallback.h"
 #include "network/NetworkListener.h"
 
 
 
-class GameWorldPresenter;
-class PlayerController;
-class GameplayMenu;
-class GameNetworkManager;
-class WorldEntities;
 
-class GameScreen : public AppLifecycleListener, GameplayMenuCallback, NetworkListener {
+
+class GameWorldScreen : public AppLifecycleListener, GameplayMenuCallback, NetworkListener {
 private:
     App *const mApp;
     GameWorldPresenter *const mWorldPresenter;
     GameNetworkManager *const mNetworkManager;
     PlayerController *const mPlayerController;
-    WorldEntities *const mEntitiesController;
+    WorldEntitiesController *const mEntitiesController;
 
     GameplayMenu *const mGameplayMenu;
 

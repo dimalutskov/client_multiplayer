@@ -1,7 +1,8 @@
 #pragma once
 
 #include <functional>
-#include <wnd_engine/utils/MathUtils.h>
+#include <engine/layout/view/View.h>
+#include <engine/utils/MathUtils.h>
 
 class GamePadView : public View {
 private:

@@ -2,22 +2,22 @@
 #include "GameplayMenu.h"
 #include "PlayerController.h"
 #include "network/GameNetworkManager.h"
-#include "WorldEntitiesController.h"
-#include "wnd_engine/game_v2/GameWorld.h"
-#include "wnd_engine/game_v2/object/GameObject.h"
-#include "wnd_engine/game_v2/presenter/GameWorldPresenter.h"
-#include "wnd_engine/game_v2/presenter/GameObjectPresenter.h"
-#include "app/game/controls/GamePadController.h"
-#include "wnd_engine/Logger.h"
+#include "WorldEntities.h"
+#include "engine/game_v2/GameWorld.h"
+#include "engine/game_v2/object/GameObject.h"
+#include "engine/game_v2/presenter/GameWorldPresenter.h"
+#include "engine/game_v2/presenter/GameObjectPresenter.h"
+#include "app/game/view/GamePadController.h"
+#include "engine/Logger.h"
 #include "../resources/AppRes.h"
 
-using namespace wnd;
+
 
 GameScreen::GameScreen(App *app) : mApp(app),
                                    mWorldPresenter(createWorld(app)),
                                    mNetworkManager(new GameNetworkManager(app->getPlatform(), this)),
                                    mPlayerController(new PlayerController(mWorldPresenter, mNetworkManager)),
-                                   mEntitiesController(new WorldEntitiesController(mWorldPresenter)),
+                                   mEntitiesController(new WorldEntities(mWorldPresenter)),
                                    mGameplayMenu(createGameplayMenu(app)) {
 }
 

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "AppConstants.h"
-#include "../wnd_engine/render/opengl/shaders/ShaderHandler.h"
+#include "../engine/render/opengl/shaders/ShaderHandler.h"
 
-using namespace wnd;
+
 
 static char *FRAGMENT_SHADER_SPACE = const_cast<char *>(
         "precision mediump float;\n"

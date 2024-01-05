@@ -4,12 +4,12 @@
 #include "AppResStrings.h"
 #include "AppResDimensions.h"
 #include "AppResDimensionsMobile.h"
-#include "wnd_engine/layout/view/text/FontBaseTextureProvider.h"
+#include "engine/layout/view/text/FontBaseTextureProvider.h"
 //#include "app/resources/font/FutureEarthFontProvider.h"
 //#include <app/resources/font/EthnocentricFontProvider.h>
 //#include "font/SoupOfJusticeFontProvider.h"
 
-using namespace wnd;
+
 
 class AppResFactory {
 public:

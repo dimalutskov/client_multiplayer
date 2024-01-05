@@ -1,13 +1,12 @@
 #pragma once
 
-#include "../../../wnd_engine/layout/view/View.h"
 #include "GamePadView.h"
 
 class GamePadListener {
 public:
-    virtual void onShowGamePad(GamePadView *view, float x, float y) {}
-    virtual void onHideGamePad(GamePadView *view) {}
-    virtual void onUpdateGamePad(GamePadView *view, int angle, int progress) {}
+    virtual void onShowGamePad(GamePadView *view, float x, float y) = 0;
+    virtual void onHideGamePad(GamePadView *view) = 0;
+    virtual void onUpdateGamePad(GamePadView *view, int angle, int progress) = 0;
 };
 
 class GamePadController {

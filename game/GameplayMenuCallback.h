@@ -1,8 +1,8 @@
 #pragma once
 
-#include "wnd_engine/layout/Point.h"
+#include "engine/layout/Point.h"
 
-using namespace wnd;
+
 
 class GameplayMenuCallback {
 public:

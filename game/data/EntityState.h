@@ -1,6 +1,6 @@
 #pragma once
 
-#include "wnd_engine/utils/CollectionUtils.h"
+#include "engine/utils/CollectionUtils.h"
 
 using namespace std;
 
@@ -34,7 +34,7 @@ public:
 
     EntityState(uint64_t clientTime, uint64_t serverTime, string &stateString)
             : clientWorldTime(clientTime), serverTime(serverTime) {
-        wnd::CollectionUtils::split(this->stateSplits, stateString, ',');
+        CollectionUtils::split(this->stateSplits, stateString, ',');
     }
 
     const uint64_t &getClientTime() const {

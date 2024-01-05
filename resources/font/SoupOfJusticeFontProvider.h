@@ -1,8 +1,8 @@
 #pragma once
 
-#include "wnd_engine/layout/view/text/FontTextureProvider.h"
+#include "engine/layout/view/text/FontTextureProvider.h"
 
-using namespace wnd;
+
 
 class SoupOfJusticeFontProvider : public BaseCharTextureProvider {
 public:

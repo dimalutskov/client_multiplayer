@@ -1,7 +1,7 @@
 #pragma once
 
-#include "WorldState.h"
-#include "EntityInfluence.h"
+#include "../data/WorldState.h"
+#include "../data/EntityInfluence.h"
 
 class NetworkListener {
 public:
