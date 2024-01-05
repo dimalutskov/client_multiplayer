@@ -7,23 +7,29 @@
 
 #include "AppShaderHandler.h"
 #include "game/network/NetworkProtocol.h"
+#include "MainMenuScreen.h"
 #include "game/GameScreen.h"
 
-class MyApp : public App, public WebSocketListener {
+
+class MyApp : public App,
+        public WebSocketListener,
+        public MainMenuScreenCallback,
+        public GameScreenCallback {
 private:
 
     PlatformWebSocket *mWebSocket;
 
-    ViewGroup *mRootView;
-
-    View *mBtnConnect;
-
+    MainMenuScreen *mMainMenuScreen;
+    GameScreen *mGameScreen;
 
 public:
 
     MyApp(Platform *platform) : App(platform) {
         mWebSocket = platform->addWebSocket(0, NetworkProtocol::SERVER_URL);
         mWebSocket->addListener(this);
+
+        mMainMenuScreen = 0;
+        mGameScreen = 0;
     }
 
     virtual ~MyApp() {}
@@ -35,36 +41,8 @@ public:
         OpenGLRenderer *openGlRenderer = static_cast<OpenGLRenderer *>(renderer);
         openGlRenderer->setShaderHandler(new AppShaderHandler());
 
-        mRootView = new ViewGroup();
-        mRootView->setSize(renderer->getWindow()->getWidth(), renderer->getWindow()->getHeight());
-        attachView(mRootView);
-
-        mBtnConnect = new View();
-        mBtnConnect->setSize(300, 100);
-
-        mBtnConnect->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
-            auto *thisClass = static_cast<MyApp*>(customData);
-            auto color = thisClass->mWebSocket->isConnecting() ? RgbData(100, 100, 100) :
-                    thisClass->mWebSocket->isConnected() ? RgbData(255, 0, 0) : RgbData(255, 255, 0);
-            canvas->draw(canvas->newObject()
-                                 ->setRenderData(RenderData(color)));
-        }, this));
-
-        mBtnConnect->setClickListener([this](View *view) {
-            if (mWebSocket->isConnected()) {
-                mWebSocket->disconnect();
-            } else {
-                mWebSocket->connect();
-            }
-            mBtnConnect->invalidate();
-        });
-
-
-        mRootView->subscribeSizeChanges([this](Point<int> oldSize, Point<int> newSize) {
-            mBtnConnect->setLocation(mRootView->getWidth() / 2 - mBtnConnect->getWidth() / 2, 100);
-        }, true);
-
-        mRootView->addChild(mBtnConnect);
+        mMainMenuScreen = new MainMenuScreen(this, this);
+        mMainMenuScreen->attach();
     }
 
     void onResume() override {}
@@ -72,19 +50,30 @@ public:
     void onPause() override {}
 
     void onAppWindowSizeChanged(int oldWidth, int newWidth, int oldHeight, int newHeight) override {
-        mRootView->setSize(newWidth, newHeight);
+//        mRootView->setSize(newWidth, newHeight);
+    }
+
+    void onMainScreenButtonClick() override {
+        mMainMenuScreen->detach();
+
+        if (mGameScreen == 0) {
+            mGameScreen = new GameScreen(this, this);
+        }
+        mGameScreen->attach();
+    }
+
+    virtual void onGameScreenButtonClick() override {
+        mGameScreen->detach();
+        mMainMenuScreen->attach();
     }
 
     void onWebSocketConnected(int webSocketId) override {
-        mBtnConnect->invalidate();
     }
 
     void onWebSocketDisconnected(int webSocketId) override {
-        mBtnConnect->invalidate();
     }
 
     void onWebSocketError(int webSocketId, std::string errMsg) override {
-        mBtnConnect->invalidate();
     }
 
 };
