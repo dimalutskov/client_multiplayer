@@ -8,6 +8,7 @@
 #include "GameplayMenuCallback.h"
 #include "network/GameNetworkManager.h"
 
+#include "GameplayController.h"
 
 class GameplayMenu : GamePadListener {
 private:
@@ -37,10 +38,9 @@ public:
         view->subscribeSizeChanges([this](Point<int> oldSize, Point<int> newSize) {
             gamePadController->setGamePadTouchRect(Rect<int>(0, 0, view->getWidth() / 2, view->getHeight()));
         }, true);
-        initMenu();
 
-        mHealthTextDrawer = 0;
-        mEnergyTextDrawer = 0;
+        initSkills();
+        initPropertyDrawers();
     }
 
     ViewGroup *getView() { return view; }
@@ -61,34 +61,12 @@ public:
         mCallback->onGamePadMove(angle, progress);
     }
 
-    void showPlayerControls() {
-        initSkills();
-        initPropertyDrawers();
-    }
-
     void update(const EntityState &playerState) {
         mHealthTextDrawer->setText(playerState.get(EntityState::POS_HEALTH));
         mEnergyTextDrawer->setText(playerState.get(EntityState::POS_ENERGY));
     }
 
 private:
-    void initMenu() {
-        View *playView = new View();
-        playView->setSize(100, 100);
-        playView->addDrawer(new ViewDrawer([](ViewCanvas *canvas, void *customData) {
-            canvas->draw(canvas->newObject()
-                                 ->setRenderData(RenderData(
-                                         RgbData(0, 0, 200)
-                                 )));
-        }));
-        playView->setClickListener([this](View *view) {
-            mCallback->onButtonClick(GameplayMenuCallback::BTN_ID_PLAY);
-        });
-        view->addChild(playView);
-        view->subscribeSizeChanges([this, playView](Point<int> oldSize, Point<int> newSize) {
-            playView->setLocation(view->getWidth() - playView->getWidth() - 100, 100);
-        }, true);
-    }
 
     void initSkills() {
         // 1

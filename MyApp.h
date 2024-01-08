@@ -3,7 +3,7 @@
 #include <engine/App.h>
 #include <engine/render/opengl/OpenGLRenderer.h>
 #include <engine/layout/view/ViewGroup.h>
-#include <engine/platform/PlatformWebSocket.h>
+
 
 #include "AppShaderHandler.h"
 #include "game/network/NetworkProtocol.h"
@@ -54,26 +54,34 @@ public:
     }
 
     void onMainScreenButtonClick() override {
-        mMainMenuScreen->detach();
-
-        if (mGameScreen == 0) {
-            mGameScreen = new GameScreen(this, this);
-        }
-        mGameScreen->attach();
+        mWebSocket->connect();
+        mMainMenuScreen->showProgress();
     }
 
     virtual void onGameScreenButtonClick() override {
+        mWebSocket->disconnect();
         mGameScreen->detach();
         mMainMenuScreen->attach();
     }
 
     void onWebSocketConnected(int webSocketId) override {
+        mMainMenuScreen->hideProgress();
+        mMainMenuScreen->detach();
+
+        if (mGameScreen == 0) {
+            mGameScreen = new GameScreen(this, mWebSocket, this);
+        }
+        mGameScreen->attach();
     }
 
     void onWebSocketDisconnected(int webSocketId) override {
     }
 
     void onWebSocketError(int webSocketId, std::string errMsg) override {
+        mMainMenuScreen->hideProgress();
     }
 
+    void onWebSocketMessage(int webSocketId, std::string message) override {
+
+    }
 };

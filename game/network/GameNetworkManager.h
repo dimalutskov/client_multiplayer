@@ -2,8 +2,9 @@
 
 #include <string>
 #include <unordered_set>
-#include "engine/platform/Platform.h"
-#include "engine/Logger.h"
+#include <engine/platform/Platform.h>
+#include <engine/platform/PlatformWebSocket.h>
+#include <engine/Logger.h>
 #include "NetworkListener.h"
 #include "NetworkProtocol.h"
 
@@ -13,7 +14,8 @@ private:
 
     Platform *const mPlatform;
     PlatformWebSocket *const mWebSocket;
-    NetworkListener *const mListener;
+
+    std::list<NetworkListener*> listeners;
 
     string playerServerObjectId;
     long serverUpdateInterval;
@@ -27,10 +29,14 @@ private:
     unordered_set<string> skillObjectIds;
 
 public:
-    GameNetworkManager(Platform *platform, NetworkListener *listener) : mPlatform(platform), mWebSocket(platform->addWebSocket(0, NetworkProtocol::SERVER_URL)), mListener(listener) {
+    GameNetworkManager(Platform *platform, PlatformWebSocket *webSocket) : mPlatform(platform), mWebSocket(webSocket) {
         mWebSocket->addListener(this);
         lastMovementUpdate = 0;
         serverUpdateInterval = 0;
+    }
+
+    void subscribe(NetworkListener *listener) {
+        listeners.push_back(listener);
     }
 
     void connect() {
@@ -87,12 +93,12 @@ private:
 
     virtual void onWebSocketConnected(int socketId) override {
         Logger::log("@@@ onSocketConnected");
-        mListener->onConnection(true);
+        for (NetworkListener *listener : listeners) listener->onConnection(true);
     }
 
     virtual void onWebSocketDisconnected(int socketId) override {
         Logger::log("@@@ onSocketDisconnected");
-        mListener->onConnection(false);
+        for (NetworkListener *listener : listeners) listener->onConnection(false);
     }
 
     virtual void onWebSocketMessage(int socketId, std::string message) override {
@@ -123,7 +129,7 @@ private:
             uint64_t serverTime = stol(splits[1]);
             EntityState entity(clientWorldTime, serverTime, splits[2]);
             playerServerObjectId = entity.getObjectId();
-            mListener->onJoinGame(entity);
+            for (NetworkListener *listener : listeners) listener->onJoinGame(entity);
             ss << "onJoin " << message;
         }
             // ADD|DESTROY
@@ -134,10 +140,10 @@ private:
             std::uint64_t entityClientTime = clientWorldTime - (serverTime - objectTime);
             EntityState entity(entityClientTime, serverTime, splits[3]);
             if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_ADDED) {
-                mListener->onGameEntityAdded(entity);
+                for (NetworkListener *listener : listeners) listener->onGameEntityAdded(entity);
                 ss << "onObjectAdded " << message;
             } else if (splits[0] == NetworkProtocol::SERVER_MSG_OBJECT_DESTROYED) {
-                mListener->onGameEntityDestroyed(entity);
+                for (NetworkListener *listener : listeners) listener->onGameEntityDestroyed(entity);
                 skillObjectIds.erase(entity.getObjectId()); // TODO????
                 ss << "onObjectDestroyed " << message;
             }
@@ -149,13 +155,13 @@ private:
             std::uint64_t influenceAttachTime = stol(splits[3]);
             std::uint64_t attachTime = clientWorldTime - (serverTime - influenceAttachTime);
             EntityInfluence influence(attachTime, splits[4]);
-            mListener->onAttachEntityInfluence(entityId, influence);
+            for (NetworkListener *listener : listeners) listener->onAttachEntityInfluence(entityId, influence);
             ss << "onAttachInfluence " << message;
         } else if (splits[0] == NetworkProtocol::SERVER_MSG_INFLUENCE_OFF) {
 //        std::uint64_t time = stol(splits[1]);
 //        std::string entityId = splits[2];
 //        EntityInfluence influence(splits[3]);
-//        mListener->onDetachEntityInfluence(entityId, influence);
+//        listener->onDetachEntityInfluence(entityId, influence);
             ss << "onDetachInfluence " << message;
         } else if (splits[0] == NetworkProtocol::SERVER_MSG_RESPONSE_SKILL_OBJECTS) {
             std::uint64_t time = stol(splits[1]);
@@ -165,7 +171,7 @@ private:
             ss << "onSkillObjects " << message;
         } else if (splits[0] == NetworkProtocol::SERVER_MSG_STATE) {
             lastWorldState = WorldState(clientRealTime, clientWorldTime, splits);
-            mListener->onGameStateUpdated(lastWorldState);
+            for (NetworkListener *listener : listeners) listener->onGameStateUpdated(lastWorldState);
             ss << "onWebSocketMessage " << message;
         }
 

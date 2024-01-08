@@ -2,8 +2,6 @@
 
 #include "engine/layout/Point.h"
 
-
-
 class GameplayMenuCallback {
 public:
     static const int BTN_ID_PLAY = 1;
